@@ -1,0 +1,127 @@
+/*
+ * High Noon's HUD: a frontier print shop. Parchment handbills in sepia ink, woodtype display
+ * (Rye), a typewriter hand (Special Elite) for the small print, brass for highlights, a leather
+ * strap for health. This is the game's `hud.theme.css`: it restyles the platform's HUD by its
+ * classes; the colours are the theme's (`--hud-ink`, `--hud-paper`, `--hud-accent`…).
+ */
+
+/* The platform's ammo counter makes way for the game's own cylinder widget. */
+.ammo {
+  display: none;
+}
+
+/* Big type: woodtype, cream on a sepia shadow. */
+.banner-title, .hud-pop-text, .result-title {
+  color: #f4e6c4;
+  letter-spacing: 0.04em;
+  text-shadow: 3px 3px 0 var(--hud-ink, #2b1a0e), 0 0 18px rgba(0, 0, 0, 0.45);
+}
+.banner-sub, .hud-pop-sub, .game-toast, .marker-label {
+  color: #f4e6c4;
+  text-shadow: 2px 2px 0 var(--hud-ink, #2b1a0e);
+}
+
+/* Handbills: parchment, a ruled border, a slight lift. */
+.stat, .objective, .scoreboard, .result-card, .menu-card, .hotbar {
+  background: radial-gradient(ellipse at 50% 35%, #f1e2bd 0 55%, #dcc592 100%);
+  color: var(--hud-fg, #2b1a0e);
+  border: 2px solid var(--hud-ink, #2b1a0e);
+  outline: 1px solid rgba(43, 26, 14, 0.35);
+  outline-offset: -6px;
+  border-radius: 2px;
+  box-shadow: 4px 5px 0 rgba(0, 0, 0, 0.4);
+  backdrop-filter: none;
+  text-shadow: none;
+}
+.stat-label, .stat-value, .objective, .sb-title, .sb-table, .sb-footer, .menu-title, .menu-sub, .menu-label, .menu-note, .menu-detail, .result-sub, .result-stat {
+  color: var(--hud-fg, #2b1a0e);
+  text-shadow: none;
+}
+.sb-title, .menu-title {
+  font-family: var(--pixel);
+  letter-spacing: 0.05em;
+}
+.sb-table tr.me td {
+  background: #d9b060;
+  color: var(--hud-ink, #2b1a0e);
+}
+.sb-table tr.me td.sb-name {
+  color: var(--hud-ink, #2b1a0e) !important;
+}
+.sb-table td, .sb-table th {
+  border-bottom: 1px dashed rgba(43, 26, 14, 0.3);
+}
+
+/* The kill feed: telegram strips. */
+.feed-line {
+  background: #efe0b8;
+  color: var(--hud-ink, #2b1a0e);
+  border-left: 4px solid var(--hud-danger, #8e1b12);
+  border-radius: 0;
+  box-shadow: 2px 3px 0 rgba(0, 0, 0, 0.35);
+  text-shadow: none;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+/* Health: a leather strap with brass rivets. */
+.healthbar-track {
+  background: #3a2414;
+  border: 2px solid #1c1008;
+  border-radius: 3px;
+  box-shadow: 3px 4px 0 rgba(0, 0, 0, 0.35), inset 0 0 0 2px rgba(255, 210, 122, 0.25);
+}
+.healthbar-text {
+  text-shadow: 2px 2px 0 #1c1008;
+}
+
+/* The hotbar: wooden frames. */
+.hotbar {
+  padding: 5px;
+}
+.slot {
+  background: rgba(43, 26, 14, 0.1);
+  border: 2px solid transparent;
+  border-radius: 2px;
+}
+.slot.selected {
+  background: #d9b060;
+  border-color: var(--hud-ink, #2b1a0e);
+  box-shadow: none;
+}
+.slot .key {
+  color: var(--hud-fg, #2b1a0e);
+}
+
+/* Menus and the result screen. */
+.menu-entry {
+  background: rgba(43, 26, 14, 0.06);
+  border: 2px solid var(--hud-ink, #2b1a0e);
+  border-radius: 2px;
+  color: var(--hud-fg, #2b1a0e);
+}
+.menu-entry:hover, .menu-entry.active {
+  background: #d9b060;
+}
+.menu-close {
+  color: var(--hud-fg, #2b1a0e);
+}
+.result-screen, .menu-screen, .widget-screen {
+  background: radial-gradient(circle at 50% 45%, rgba(255, 196, 110, 0.18), rgba(30, 16, 6, 0.72));
+}
+
+/* The crosshair: a thin brass cross. */
+.gun-cross span {
+  background: #ffd27a;
+  box-shadow: 0 0 0 1px rgba(28, 16, 8, 0.8);
+}
+.hurt-arrow {
+  border-bottom-color: var(--hud-danger, #8e1b12);
+}
+.dmg-number {
+  color: #ffd27a;
+  text-shadow: 2px 2px 0 var(--hud-ink, #2b1a0e);
+}
+.dmg-number.crit {
+  color: #ff7a4a;
+}

@@ -1,0 +1,223 @@
+/*
+ * The home page's and the pause menu's look, over the layout style.css gives them: a clean
+ * condensed display face (Barlow Condensed) in wide-tracked capitals where the pixel face was,
+ * flatter buttons with small radii, hairlines, and each game's colour (`--game`) as the accent: the
+ * rule over its name, its Play button, its card's ring, the pause menu's marks. Only the look:
+ * the structure and behaviour are home.ts's and pause.ts's, and games' HUDs keep their own faces
+ * (`--pixel` changes only inside these two screens).
+ */
+
+:root {
+  --ui-display: 'Barlow Condensed', 'Arial Narrow', 'Helvetica Neue', sans-serif;
+}
+.home,
+.pause-screen {
+  --pixel: var(--ui-display);
+}
+.home kbd,
+.pause-screen kbd {
+  min-width: 20px;
+  padding: 2px 6px;
+  border-radius: 4px;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-bottom-width: 1px;
+  background: rgba(255, 255, 255, 0.08);
+  font: 600 10.5px var(--sans);
+  letter-spacing: 0.02em;
+  text-align: center;
+}
+
+/* ---------- The home page ---------- */
+.home-logo {
+  font: 600 19px/1 var(--pixel);
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  background: none;
+  color: #f3f5f7;
+  filter: none;
+  text-shadow: 0 1px 10px rgba(0, 0, 0, 0.5);
+}
+.home-pitch {
+  font-size: 13px;
+  letter-spacing: 0.01em;
+}
+.home-online {
+  font-size: 12.5px;
+  letter-spacing: 0.02em;
+}
+.home-room-tag {
+  padding: 4px 10px 3px;
+  border-radius: 3px;
+  font: 600 12px var(--pixel);
+  letter-spacing: 0.24em;
+}
+/* The game's name: tall condensed capitals, a rule in its colour over them. */
+.home-title {
+  font: 600 clamp(46px, 6.8vw, 104px)/0.9 var(--pixel);
+  letter-spacing: 0.035em;
+  text-transform: uppercase;
+  color: #f7f8fa;
+  text-shadow: 0 0 60px color-mix(in srgb, var(--game) 28%, transparent), 0 4px 30px rgba(0, 0, 0, 0.55);
+}
+.home-title::before {
+  content: '';
+  display: block;
+  width: 64px;
+  height: 3px;
+  margin-bottom: 20px;
+  border-radius: 2px;
+  background: var(--game);
+  box-shadow: 0 0 16px color-mix(in srgb, var(--game) 60%, transparent);
+}
+.home-tagline {
+  margin-top: 16px;
+  font: 400 clamp(15px, 1.2vw, 18px)/1.5 var(--sans);
+  color: rgba(238, 241, 246, 0.92);
+}
+.home-status {
+  font-size: 12.5px;
+  color: rgba(214, 220, 230, 0.8);
+}
+.home-actions {
+  gap: 8px;
+  margin-top: 26px;
+}
+.home-name {
+  border-radius: 6px;
+  border-color: rgba(255, 255, 255, 0.12);
+  background: rgba(8, 11, 17, 0.58);
+}
+.home-name > span {
+  font: 600 10px var(--sans);
+  letter-spacing: 0.14em;
+}
+.home-play {
+  gap: 14px;
+  min-height: 58px;
+  border-radius: 6px;
+  border: 0;
+  font: 600 22px/1 var(--pixel);
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  background: var(--game);
+  box-shadow: 0 12px 34px color-mix(in srgb, var(--game) 32%, transparent);
+  transition: transform 140ms ease, filter 160ms ease, box-shadow 160ms ease;
+}
+.home-play:not(:disabled)::before {
+  border-width: 6px 0 6px 10px;
+}
+.home-play:not(:disabled):hover {
+  filter: brightness(1.08);
+  box-shadow: 0 14px 40px color-mix(in srgb, var(--game) 42%, transparent);
+}
+.home-play:disabled {
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  letter-spacing: 0.01em;
+  text-transform: none;
+}
+.home-alt {
+  font-weight: 500;
+}
+.home-alt-title::before {
+  font-weight: 500;
+}
+.home-alt.compact {
+  border-radius: 6px;
+  border-color: rgba(255, 255, 255, 0.12);
+}
+.hint-line {
+  gap: 8px 18px;
+  font-size: 12.5px;
+  color: rgba(232, 236, 243, 0.78);
+}
+
+/* The shelf: flatter cards, the name in capitals under a line of the game's colour. */
+.home-shelf {
+  gap: 10px;
+}
+.home-card {
+  border-radius: 8px;
+  border-color: rgba(255, 255, 255, 0.1);
+  filter: saturate(0.75) brightness(0.72);
+}
+.home-card.current {
+  box-shadow: 0 0 0 1.5px var(--game), 0 16px 36px color-mix(in srgb, var(--game) 24%, rgba(0, 0, 0, 0.55));
+}
+.home-card-name {
+  left: 12px;
+  bottom: 9px;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 5px;
+  font: 600 13px/1.05 var(--pixel);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+.home-card-name::before {
+  width: 16px;
+  height: 2px;
+  border-radius: 1px;
+}
+.home-card-live {
+  border-radius: 4px;
+  font-size: 10.5px;
+}
+
+/* ---------- The pause menu ---------- */
+.pause-rail {
+  background: rgba(8, 10, 16, 0.84);
+  border-right-color: rgba(255, 255, 255, 0.07);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+}
+.pause-kicker {
+  font: 600 11px var(--pixel);
+  letter-spacing: 0.4em;
+}
+.pause-title {
+  font: 600 34px/1 var(--pixel);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.pause-item {
+  padding: 11px 14px;
+  border-radius: 6px;
+  font: 500 15px var(--sans);
+}
+.pause-item.active::before {
+  top: 10px;
+  bottom: 10px;
+  width: 2px;
+}
+.pause-item.primary {
+  padding: 15px 14px 14px;
+  border: 0;
+  border-radius: 6px;
+  font: 600 18px/1 var(--pixel);
+  letter-spacing: 0.34em;
+  text-transform: uppercase;
+  background: var(--game);
+  box-shadow: 0 10px 28px color-mix(in srgb, var(--game) 24%, transparent);
+}
+.pause-item.primary:hover {
+  background: var(--game);
+  filter: brightness(1.08);
+}
+.pause-card,
+.pause-pane.settings {
+  border-radius: 10px;
+  border-color: rgba(255, 255, 255, 0.07);
+}
+.pause-card h3,
+.set-group h3 {
+  font: 600 12px var(--pixel);
+  letter-spacing: 0.3em;
+}
+.pause-tab {
+  font: 600 14px var(--pixel);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+.pause-player {
+  border-radius: 4px;
+}

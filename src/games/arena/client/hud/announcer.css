@@ -1,0 +1,305 @@
+/* The announcer (client/hud/announcer.ts), in the theme's palette (hud/hud.css). */
+
+/* ---------- Big callouts: a kicker, the title in Roman capitals, a rule, a line ---------- */
+.ar-stage {
+  position: absolute;
+  left: 0;
+  right: 0;
+  /* Under the wave's block, however short the screen. */
+  top: max(23%, 178px);
+  display: grid;
+  justify-items: center;
+  transition: top 300ms ease;
+}
+/* A boss's bar is up (and its phase lines under it, the bosses' .ab-phase): callouts go under them. */
+body:has(.bossbar:not([style*='none'])) .ar-stage {
+  top: max(23%, 236px);
+}
+/* A wave's card is up (client/hud/cards.ts): callouts go under it. */
+body:has(.ar-card:not(.out)) .ar-stage {
+  top: max(23%, 390px);
+}
+.ar-call {
+  --c: var(--ar-gold, #f0c060);
+  grid-area: 1 / 1;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  white-space: nowrap;
+  filter: var(--ar-halo);
+  transition: opacity 420ms ease, transform 420ms ease;
+}
+.ar-call.out {
+  opacity: 0;
+  transform: translateY(-14px);
+}
+.ar-call-q {
+  font: 500 14px/1 var(--ar-label);
+  letter-spacing: 0.5em;
+  margin-right: -0.5em;
+  text-transform: uppercase;
+  color: color-mix(in srgb, var(--c) 75%, white);
+  animation: ar-call-fade 500ms ease both 80ms;
+}
+.ar-call-t {
+  margin-top: 10px;
+  font: 800 84px/0.95 var(--ar-title);
+  letter-spacing: 0.12em;
+  margin-right: -0.12em;
+  text-transform: uppercase;
+  background: linear-gradient(180deg, #fffaf0 15%, color-mix(in srgb, var(--c) 60%, #f5efe4) 60%, color-mix(in srgb, var(--c) 85%, #3a2410) 95%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  filter: drop-shadow(0 0 22px color-mix(in srgb, var(--c) 45%, transparent)) drop-shadow(0 3px 2px rgba(0, 0, 0, 0.55));
+  animation: ar-call-slam 650ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+.ar-call-rule {
+  position: relative;
+  margin-top: 14px;
+  width: 460px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, color-mix(in srgb, var(--c) 70%, transparent) 25%, color-mix(in srgb, var(--c) 70%, transparent) 75%, transparent);
+  animation: ar-call-rule 800ms cubic-bezier(0.2, 0.8, 0.2, 1) both 120ms;
+}
+.ar-call-rule::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: -3px;
+  width: 7px;
+  height: 7px;
+  margin-left: -3.5px;
+  background: var(--c);
+  transform: rotate(45deg);
+  box-shadow: 0 0 8px var(--c);
+}
+.ar-call-s {
+  margin-top: 13px;
+  font: 500 17px/1.2 var(--ar-label);
+  letter-spacing: 0.3em;
+  margin-right: -0.3em;
+  text-transform: uppercase;
+  color: var(--ar-fg, #f5efe4);
+  text-shadow: var(--ar-shadow);
+  animation: ar-call-fade 600ms ease both 260ms;
+}
+/* A twist, a return, a blessing: smaller. */
+.ar-call.k-twist .ar-call-t,
+.ar-call.k-back .ar-call-t,
+.ar-call.k-blessing .ar-call-t {
+  font-size: 58px;
+}
+.ar-call.k-twist .ar-call-s,
+.ar-call.k-blessing .ar-call-s {
+  font: 500 16px/1.3 var(--sans);
+  letter-spacing: 0.04em;
+  margin-right: 0;
+  text-transform: none;
+}
+/* Harm: in blood. */
+.ar-call.k-out,
+.ar-call.k-defeat {
+  --c: var(--ar-blood, #d8343c);
+}
+.ar-call.k-out .ar-call-t {
+  font-size: 66px;
+}
+.ar-call.k-back {
+  --c: var(--ar-good, #9fd870);
+}
+/* The endless waves: in the night's violet. */
+.ar-call.k-endless {
+  --c: #c9a2ff;
+}
+/* The final wave and the end: bigger still. */
+.ar-call.k-final .ar-call-t,
+.ar-call.k-endless .ar-call-t,
+.ar-call.k-victory .ar-call-t,
+.ar-call.k-defeat .ar-call-t {
+  font-size: 100px;
+}
+/* The Crowd's Favour: gold rays turning behind it. */
+.ar-call.k-favour {
+  --c: #ffcf3f;
+}
+.ar-call.k-favour::before {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 55%;
+  width: 760px;
+  height: 760px;
+  margin: -380px 0 0 -380px;
+  z-index: -1;
+  background: repeating-conic-gradient(rgba(255, 207, 63, 0.16) 0 6deg, transparent 6deg 18deg);
+  -webkit-mask: radial-gradient(circle, #000 8%, transparent 62%);
+  mask: radial-gradient(circle, #000 8%, transparent 62%);
+  animation: ar-rays 8s linear infinite, ar-call-fade 600ms ease both;
+}
+@keyframes ar-call-slam {
+  0% {
+    opacity: 0;
+    transform: scale(1.3);
+    letter-spacing: 0.42em;
+  }
+  60% {
+    opacity: 1;
+  }
+}
+@keyframes ar-call-fade {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+}
+@keyframes ar-call-rule {
+  from {
+    width: 0;
+    opacity: 0;
+  }
+}
+@keyframes ar-rays {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ---------- Feats and friends: under the crosshair (below the platform's pops: a status, a stun) ---------- */
+.ar-feats {
+  position: absolute;
+  left: 50%;
+  top: calc(50% + 112px);
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+.ar-feat {
+  --c: var(--ar-gold, #f0c060);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  white-space: nowrap;
+  filter: var(--ar-halo);
+  animation: ar-feat-in 380ms cubic-bezier(0.3, 1.7, 0.5, 1) both;
+  transition: opacity 400ms ease, transform 400ms ease;
+}
+.ar-feat.bump {
+  animation: ar-feat-bump 300ms cubic-bezier(0.3, 1.8, 0.5, 1);
+}
+.ar-feat.out {
+  opacity: 0;
+  transform: translateY(-10px);
+}
+.ar-feat-t {
+  font: 800 28px/1 var(--ar-title);
+  letter-spacing: 0.1em;
+  margin-right: -0.1em;
+  text-transform: uppercase;
+  color: color-mix(in srgb, var(--c) 55%, #fff6dc);
+  text-shadow: 0 0 16px color-mix(in srgb, var(--c) 60%, transparent), 0 2px 3px rgba(0, 0, 0, 0.7);
+}
+.ar-feat.t1 .ar-feat-t {
+  font-size: 34px;
+}
+.ar-feat.t2 .ar-feat-t {
+  font-size: 40px;
+}
+.ar-feat.t3 .ar-feat-t {
+  font-size: 48px;
+  color: #fff6dc;
+  text-shadow: 0 0 24px var(--c), 0 0 48px color-mix(in srgb, var(--c) 50%, transparent), 0 2px 3px rgba(0, 0, 0, 0.7);
+}
+.ar-feat.long .ar-feat-t {
+  font-size: 24px;
+  letter-spacing: 0.08em;
+}
+.ar-feat-s {
+  margin-top: 4px;
+  font: 500 12px/1 var(--ar-label);
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+  color: var(--ar-fg2, rgba(245, 239, 228, 0.7));
+}
+.ar-feat.k-ally .ar-feat-t {
+  font: 600 18px/1 var(--ar-label);
+  letter-spacing: 0.24em;
+  color: var(--ar-fg, #f5efe4);
+  text-shadow: var(--ar-shadow);
+}
+@keyframes ar-feat-in {
+  from {
+    opacity: 0;
+    transform: scale(1.7);
+  }
+}
+@keyframes ar-feat-bump {
+  from {
+    transform: scale(1.35);
+  }
+}
+
+/* ---------- The last seconds before a wave ---------- */
+.ar-count {
+  position: absolute;
+  left: 50%;
+  top: 40%;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+.ar-count > span {
+  display: block;
+  font: 800 132px/1 var(--ar-title);
+  color: var(--ar-gold-hi, #ffe3a1);
+  text-shadow: 0 0 40px rgba(240, 192, 96, 0.55), 0 4px 4px rgba(0, 0, 0, 0.5);
+  animation: ar-count 950ms cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+}
+@keyframes ar-count {
+  0% {
+    opacity: 0;
+    transform: scale(1.7);
+  }
+  18% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  70% {
+    opacity: 0.9;
+  }
+  100% {
+    opacity: 0;
+    transform: scale(0.85);
+  }
+}
+
+@media (max-width: 1100px), (max-height: 760px) {
+  .ar-call-t {
+    font-size: 58px;
+    letter-spacing: 0.1em;
+  }
+  .ar-call-q {
+    font-size: 12px;
+  }
+  .ar-call-s {
+    font-size: 14px;
+  }
+  .ar-call.k-final .ar-call-t,
+  .ar-call.k-endless .ar-call-t,
+  .ar-call.k-victory .ar-call-t,
+  .ar-call.k-defeat .ar-call-t {
+    font-size: 70px;
+  }
+  .ar-call.k-twist .ar-call-t,
+  .ar-call.k-back .ar-call-t,
+  .ar-call.k-blessing .ar-call-t,
+  .ar-call.k-out .ar-call-t {
+    font-size: 44px;
+  }
+  .ar-call-rule {
+    width: 340px;
+  }
+}

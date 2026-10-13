@@ -1,0 +1,41 @@
+/*
+ * Block Ice's look over the platform's HUD: no hotbar, no crosshair (nothing's aimed), names over
+ * the skaters in their teams' colours, the feed and banners in chunky arcade type.
+ */
+.hotbar,
+.crosshair {
+  display: none !important;
+}
+
+.banner-title {
+  font-family: var(--pixel);
+  font-style: italic;
+  letter-spacing: 0.02em;
+  color: #fff;
+  text-shadow: 0 4px 0 #0b0d14, 0 0 24px rgba(63, 169, 245, 0.6);
+}
+
+.banner-sub {
+  font-family: var(--sans);
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.feed-line {
+  font-family: var(--sans);
+  font-weight: 700;
+  background: rgba(11, 13, 20, 0.72);
+  border-left: 3px solid var(--hud-accent);
+}
+
+.scoreboard {
+  font-family: var(--sans);
+  background: rgba(11, 13, 20, 0.9);
+  border: 2px solid rgba(255, 255, 255, 0.12);
+}
+
+.sb-title {
+  font-family: var(--pixel);
+  font-style: italic;
+}

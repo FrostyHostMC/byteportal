@@ -1,0 +1,43 @@
+# The sandbox machine (docs/PROPOSAL-OPEN-UPLOADS.md, stage 2): uploaded games' rooms, each in a
+# process of its own with no network, a user of its own and Node's permission model. Built from the
+# same image as the game server (Dockerfile), running dist-sandbox/sandbox.js. It holds no data and
+# one secret (SANDBOX_TOKEN, which the game server sends). Reachable on Fly's private network only
+# (Flycast: ws://voxel-sandbox.flycast, no public address); it sleeps when the game server lets go.
+# Deployed by CI (scripts/deploy-server.mjs --sandbox).
+app = "voxel-sandbox"
+primary_region = "iad"
+kill_signal = "SIGTERM"
+kill_timeout = "5s"
+
+[build]
+  dockerfile = "Dockerfile"
+
+[processes]
+  app = "node --disable-warning=ExperimentalWarning dist-sandbox/sandbox.js --port 8080"
+
+[env]
+  SANDBOX_ISOLATION = "full"
+
+[http_service]
+  internal_port = 8080
+  force_https = false
+  auto_stop_machines = "stop"
+  auto_start_machines = true
+  min_machines_running = 0
+  processes = ["app"]
+  [http_service.concurrency]
+    type = "connections"
+    soft_limit = 50
+    hard_limit = 100
+
+[[http_service.checks]]
+  grace_period = "10s"
+  interval = "30s"
+  method = "GET"
+  timeout = "5s"
+  path = "/health"
+
+# Rooms are processes here (a Node each, 40-80 MB): 2 GB holds a dozen or so.
+[[vm]]
+  size = "performance-1x"
+  memory = "2048mb"

@@ -1,0 +1,146 @@
+/*
+ * Call of Blocky's HUD: comic-book pulp, ink outlines and hard offset shadows on paper panels.
+ * This is the game's `hud.theme.css`: it restyles the platform's own HUD pieces (their classes
+ * are the platform's), and the platform keeps it to the HUD. Colours come from the theme's
+ * `colors` (--hud-ink, --hud-paper, --hud-accent…).
+ */
+
+/* Big type: inked outlines and a hard shadow. */
+.banner-title, .hud-pop-text, .ammo-mag, .ammo-reserve, .healthbar-text, .dmg-number, .result-title {
+  -webkit-text-stroke: 2px var(--hud-ink, #111);
+  paint-order: stroke fill;
+  text-shadow: 3px 3px 0 var(--hud-ink, #111);
+}
+.ammo-name, .ammo-reload, .marker-label, .hud-pop-sub, .banner-sub, .game-toast {
+  text-shadow: 2px 2px 0 var(--hud-ink, #111);
+}
+
+/* Panels are paper, printed in ink. */
+.stat, .objective, .hotbar, .scoreboard, .result-card, .menu-card {
+  background: var(--hud-paper, #fdf1d6);
+  color: var(--hud-fg, #111);
+  text-shadow: none;
+}
+.stat-label, .stat-value, .objective, .sb-title, .sb-table, .sb-footer, .menu-title, .menu-sub, .menu-label, .menu-note, .menu-detail, .result-sub, .result-stat {
+  color: var(--hud-fg, #111);
+  text-shadow: none;
+}
+.sb-title,
+.menu-title {
+  font-family: var(--pixel);
+  letter-spacing: 0.04em;
+}
+.stat-value {
+  font-size: 20px;
+}
+.stat-label {
+  opacity: 0.7;
+}
+.hotbar {
+  border: 3px solid var(--hud-ink, #111);
+  border-radius: 4px;
+  box-shadow: 5px 5px 0 var(--hud-ink, #111);
+  padding: 5px;
+}
+.slot {
+  background: rgba(0, 0, 0, 0.08);
+  border: 2px solid transparent;
+  border-radius: 3px;
+}
+.slot.selected {
+  background: var(--hud-accent, #ffcc00);
+  border-color: var(--hud-ink, #111);
+  box-shadow: none;
+}
+.slot .key {
+  color: var(--hud-fg, #111);
+}
+.menu-entry {
+  background: rgba(0, 0, 0, 0.06);
+  border: 2px solid var(--hud-ink, #111);
+  border-radius: 3px;
+  color: var(--hud-fg, #111);
+}
+.menu-entry:hover,
+.menu-entry.active {
+  background: var(--hud-accent, #ffcc00);
+}
+/* The loadout's guns, side on. */
+.menu-icon {
+  width: 72px;
+  height: 36px;
+  object-fit: contain;
+}
+.menu-close {
+  color: var(--hud-fg, #111);
+}
+.result-screen,
+.menu-screen,
+.widget-screen {
+  background: radial-gradient(circle at 50% 40%, rgba(255, 204, 0, 0.25), rgba(17, 17, 17, 0.7)), repeating-radial-gradient(circle at 0 0, rgba(0, 0, 0, 0.18) 0 1.5px, transparent 1.5px 7px);
+}
+.scoreboard, .result-card, .menu-card, .objective, .stat {
+  border: 3px solid var(--hud-ink, #111);
+  border-radius: 4px;
+  box-shadow: 6px 6px 0 var(--hud-ink, #111);
+  backdrop-filter: none;
+}
+.healthbar-track {
+  border: 3px solid var(--hud-ink, #111);
+  border-radius: 2px;
+  box-shadow: 4px 4px 0 var(--hud-ink, #111);
+}
+.ammo-pip {
+  box-shadow: 1px 1px 0 var(--hud-ink, #111);
+}
+.feed-line {
+  background: var(--hud-paper, rgba(0, 0, 0, 0.5));
+  border: 2px solid var(--hud-ink, #111);
+  border-radius: 2px;
+  box-shadow: 3px 3px 0 var(--hud-ink, #111);
+  color: var(--hud-fg, #fff);
+}
+.gun-cross span {
+  background: var(--hud-accent, #fff);
+  box-shadow: 0 0 0 1px var(--hud-ink, #111);
+}
+.hurt-arrow {
+  border-bottom-color: var(--hud-danger, #ff3b30);
+}
+.dmg-number {
+  font-size: 22px;
+}
+.dmg-number.crit {
+  font-size: 30px;
+}
+.sb-table tr.me td {
+  background: var(--hud-accent, #ffd36b);
+  color: var(--hud-ink, #111);
+}
+/* Your own name on it too: the leader's is gold, like the row (its colour is set on the cell itself). */
+.sb-table tr.me td.sb-name {
+  color: var(--hud-ink, #111) !important;
+}
+/* Locked in the loadout (progression): struck through in hatching, the level it opens at on an ink tag. */
+.menu-entry.disabled,
+.menu-entry.disabled:hover {
+  opacity: 1;
+  border-style: dashed;
+  background: repeating-linear-gradient(-45deg, rgba(17, 17, 17, 0.07) 0 5px, transparent 5px 10px);
+}
+.menu-entry.disabled .menu-icon {
+  filter: grayscale(1);
+  opacity: 0.4;
+}
+.menu-entry.disabled .menu-label,
+.menu-entry.disabled .menu-note {
+  opacity: 0.5;
+}
+.menu-entry.disabled .menu-detail {
+  padding: 3px 7px;
+  background: var(--hud-ink, #111);
+  color: var(--hud-paper, #fdf1d6);
+  font: 400 14px var(--pixel);
+  letter-spacing: 0.04em;
+  transform: rotate(-4deg);
+}

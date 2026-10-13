@@ -1,0 +1,13 @@
+{
+  "name": "Stonebyte",
+  "short_name": "Stonebyte",
+  "description": "Block games, played together in your browser.",
+  "start_url": "/",
+  "display": "fullscreen",
+  "background_color": "#0b0e14",
+  "theme_color": "#0b0e14",
+  "icons": [
+    { "src": "/apple-touch-icon.png", "sizes": "180x180", "type": "image/png" },
+    { "src": "/icon-512.png", "sizes": "512x512", "type": "image/png" }
+  ]
+}

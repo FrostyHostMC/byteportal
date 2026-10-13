@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <title>Stonebyte game</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Anton&family=Silkscreen:wght@400;700&family=Inter:wght@400;500;600;700&family=Barlow+Condensed:wght@500;600&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="/src/platform/style.css" />
+    <link rel="stylesheet" href="/src/platform/menus.css" />
+  </head>
+  <!-- An uploaded game's screen: shown only in a sandboxed frame of the site's page (src/frame.ts). -->
+  <body class="in-frame">
+    <div id="app">
+      <canvas id="view" class="fading"></canvas>
+      <div id="ui"></div>
+    </div>
+    <script type="module" src="/src/frame.ts"></script>
+  </body>
+</html>

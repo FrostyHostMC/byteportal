@@ -1,0 +1,66 @@
+# The game server on Fly.io: `fly deploy` (after `npm run wasm`). One machine, with a volume for
+# the SQLite worlds; it sleeps when nobody's connected and wakes on the next visit.
+app = "voxel-games"
+primary_region = "iad"
+kill_signal = "SIGINT"
+kill_timeout = "10s"
+
+[build]
+  dockerfile = "Dockerfile"
+
+# The site's addresses: the pages that may use a player's sign-in (Sign in with Discord, whose
+# application's id and secret are Fly secrets). The server answers at play.blockyard.gg,
+# under the site's own domain, so its session cookie goes with the site's requests.
+[env]
+  SITE_ORIGINS = "https://blockyard.gg,https://blockyard.potrock.xyz"
+  # Matches running at once (16 people each; a full public game overflows into another copy).
+  # Measured 2026-09-26 on performance-1x: a match with bots takes about 3% of the CPU with one
+  # viewer, a match full of people about 15% of a core; 14 was the limit there. Launch
+  # (2026-09-27): performance-4x, four times the cores, one main thread for every socket: 40.
+  # After launch (2026-10-01): shared-cpu-2x was tried and lagged badly (shared CPUs throttle a
+  # match with bots), so back to performance-1x, 2 GB, and its measured 14. Past it the home page
+  # waits and tries again; scale the [[vm]] and this together.
+  ROOMS = "14"
+  # Uploaded games (docs/PROPOSAL-UPLOADS.md): the address players reach this server at, which
+  # their files (models, pictures) are named by; and who may upload (account ids or Discord ids,
+  # comma-separated; https://play.blockyard.gg/uploads tells a signed-in account its id). `*`:
+  # anyone signed in (open since 2026-10-04), once their Discord account is a week old, after
+  # accepting the upload terms and within the limits; those named as well skip the week. Uploaded
+  # games are kept on the volume, in /data/games.
+  PUBLIC_URL = "https://play.blockyard.gg"
+  UPLOADERS = "*,87198861512146944,112164261760876544"
+  # Admins: may manage every uploaded game (approve one for the home page, take one off, ban an
+  # uploader, resolve reports), in Your games' Admin tab. The owner only.
+  ADMINS = "87198861512146944"
+  # The sandbox machine uploaded games' rooms run on (fly.sandbox.toml), on Fly's private network;
+  # the token both share is a secret (SANDBOX_TOKEN).
+  SANDBOX_URL = "ws://voxel-sandbox.flycast"
+
+[[mounts]]
+  source = "data"
+  destination = "/data"
+
+[http_service]
+  internal_port = 8080
+  force_https = true
+  auto_stop_machines = "stop"
+  auto_start_machines = true
+  min_machines_running = 0
+
+  [http_service.concurrency]
+    type = "connections"
+    soft_limit = 250
+    hard_limit = 300
+
+  [[http_service.checks]]
+    grace_period = "10s"
+    interval = "30s"
+    method = "GET"
+    path = "/health"
+    timeout = "5s"
+
+# Scaled up for launch (per-second billing: ~$0.17/hr vs $0.04 for performance-1x, with
+# ROOMS 14 and connections 250/300); back down by putting those back.
+[[vm]]
+  size = "performance-1x"
+  memory = "2048mb"

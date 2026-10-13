@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+    <meta name="theme-color" content="#0b0e14" />
+    <title>Blockyard</title>
+    <style>
+      html, body { margin: 0; height: 100%; background: #0b0e14; overflow: hidden; overscroll-behavior: none; touch-action: none; -webkit-user-select: none; user-select: none; }
+      #game { position: fixed; inset: 0; width: 100%; height: 100%; border: 0; background: #0b0e14; }
+      #loading { position: fixed; inset: 0; display: flex; align-items: center; justify-content: center; color: #8b98a9; font: 600 15px/1.4 system-ui, sans-serif; pointer-events: none; transition: opacity .4s; }
+      #pill { position: fixed; top: calc(env(safe-area-inset-top, 0px) + 6px); left: 50%; transform: translateX(-50%); z-index: 5; padding: 6px 12px; border-radius: 999px; background: rgba(0,0,0,.55); color: #fff; font: 600 12px system-ui, sans-serif; text-decoration: none; transition: opacity .6s; }
+      #problem { position: fixed; inset: 0; z-index: 10; display: none; flex-direction: column; align-items: center; justify-content: center; gap: 14px; padding: 24px; text-align: center; background: #0b0e14; color: #e6edf3; font: 15px/1.45 system-ui, sans-serif; }
+      #problem a { padding: 12px 20px; border-radius: 12px; background: #ff6a3d; color: #fff; font-weight: 700; text-decoration: none; }
+      #problem small { color: #8b98a9; max-width: 300px; }
+    </style>
+  </head>
+  <body>
+    <div id="loading">Loading Blockyard…</div>
+    <iframe
+      id="game"
+      title="Blockyard"
+      allow="fullscreen; autoplay; gamepad; accelerometer; gyroscope; clipboard-write; screen-wake-lock"
+      allowfullscreen
+      referrerpolicy="no-referrer-when-downgrade"
+    ></iframe>
+    <a id="pill" href="#" target="_blank" rel="noopener">Open full page ↗</a>
+    <div id="problem">
+      <div><b>Blockyard didn't open inside this app.</b></div>
+      <small>The page may be blocked from being shown inside another app, or you may be offline.</small>
+      <a id="open" href="#" target="_blank" rel="noopener">Open Blockyard</a>
+      <small id="detail"></small>
+    </div>
+
+    <script>
+      // Which game to open. '' shows the home page with every game. Others: callofblocky, blockfront, arena,
+      // starfighter, skyship, bedwars, golf, obby, sandbox, heart-hunt
+      var GAME = '';
+
+      var url = 'https://YOUR-USERNAME.github.io/' + (GAME ? '?game=' + encodeURIComponent(GAME) : '');
+      var frame = document.getElementById('game');
+      var loaded = false;
+
+      document.getElementById('pill').href = url;
+      document.getElementById('open').href = url;
+      frame.addEventListener('load', function () {
+        loaded = true;
+        document.getElementById('loading').style.opacity = '0';
+      });
+      frame.src = url;
+
+      // The little "open full page" link fades out once the game is up.
+      setTimeout(function () { document.getElementById('pill').style.opacity = '0'; document.getElementById('pill').style.pointerEvents = 'none'; }, 8000);
+
+      // If nothing loaded after a while, say so instead of leaving a blank screen.
+      setTimeout(function () {
+        if (loaded) return;
+        document.getElementById('problem').style.display = 'flex';
+        document.getElementById('detail').textContent = 'No response from YOUR-USERNAME.github.io after 12 seconds.';
+      }, 12000);
+    </script>
+  </body>
+</html>

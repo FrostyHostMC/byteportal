@@ -1,0 +1,361 @@
+/*
+ * The blaster HUD's look (client/blaster-hud.ts): the crosshair and its heat arc, the heat, the
+ * cycler's scope and the first-person optics' reticle. Fine white lines straight over the world;
+ * the accent aiming, amber running hot, red about to overheat, ice blue venting.
+ */
+
+/* ---------- The crosshair: four fine ticks opening with the spread, a dot, the heat arc ---------- */
+.bf-cross {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 0;
+  height: 0;
+  --gap: 10px;
+  --heat: 0;
+  --hc: rgba(255, 255, 255, 0.9);
+  --tick: rgba(255, 255, 255, 0.92);
+  transition: opacity 140ms ease;
+  filter: drop-shadow(0 0 1px rgba(0, 0, 0, 0.9)) drop-shadow(0 0 3px rgba(0, 0, 0, 0.35));
+}
+.bf-cross.gone {
+  opacity: 0;
+}
+.bf-cross > .t,
+.bf-cross > .b,
+.bf-cross > .l,
+.bf-cross > .r,
+.bf-cross > .dot {
+  position: absolute;
+  background: var(--tick);
+  transition: transform 70ms linear, background 160ms ease;
+}
+.bf-cross > .t,
+.bf-cross > .b {
+  width: 1.5px;
+  height: 7px;
+  left: -0.75px;
+}
+.bf-cross > .l,
+.bf-cross > .r {
+  width: 7px;
+  height: 1.5px;
+  top: -0.75px;
+}
+.bf-cross > .t {
+  top: -7px;
+  transform: translateY(calc(var(--gap) * -1));
+}
+.bf-cross > .b {
+  top: 0;
+  transform: translateY(var(--gap));
+}
+.bf-cross > .l {
+  left: -7px;
+  transform: translateX(calc(var(--gap) * -1));
+}
+.bf-cross > .r {
+  left: 0;
+  transform: translateX(var(--gap));
+}
+.bf-cross > .dot {
+  width: 2px;
+  height: 2px;
+  left: -1px;
+  top: -1px;
+  border-radius: 50%;
+}
+/* Aiming over the shoulder: tighter, in the accent. */
+.bf-cross.aiming {
+  --tick: var(--hud-accent, #ffe81f);
+}
+.bf-cross.aiming > .t,
+.bf-cross.aiming > .b {
+  height: 5px;
+}
+.bf-cross.aiming > .t {
+  top: -5px;
+}
+.bf-cross.aiming > .l,
+.bf-cross.aiming > .r {
+  width: 5px;
+}
+.bf-cross.aiming > .l {
+  left: -5px;
+}
+
+/* The heat arc: a thin arc right of the crosshair, just outside the ticks, filling from the bottom. */
+.bf-arc,
+.bf-arc-fill {
+  position: absolute;
+  --r: calc(var(--gap) + 16px);
+  left: calc(var(--r) * -1);
+  top: calc(var(--r) * -1);
+  width: calc(var(--r) * 2);
+  height: calc(var(--r) * 2);
+  border-radius: 50%;
+  -webkit-mask: radial-gradient(closest-side, transparent calc(100% - 2px), #000 calc(100% - 1.5px));
+  mask: radial-gradient(closest-side, transparent calc(100% - 2px), #000 calc(100% - 1.5px));
+  transition: left 70ms linear, top 70ms linear, width 70ms linear, height 70ms linear;
+  display: none;
+}
+.bf-cross.third > .bf-arc,
+.bf-cross.third > .bf-arc-fill {
+  display: block;
+}
+.bf-arc {
+  background: conic-gradient(from 50deg, rgba(255, 255, 255, 0.16) 0 80deg, transparent 80deg);
+}
+.bf-arc-fill {
+  background: conic-gradient(from 50deg, transparent 0 calc((1 - var(--heat)) * 80deg), var(--hc) calc((1 - var(--heat)) * 80deg) 80deg, transparent 80deg);
+  filter: drop-shadow(0 0 3px var(--hc));
+}
+.bf-cross.warm {
+  --hc: #ffb54a;
+}
+.bf-cross.hot {
+  --hc: #ff5a4f;
+}
+.bf-cross.hot > .bf-arc-fill {
+  animation: bf-soft 0.5s ease-in-out infinite;
+}
+.bf-cross.over,
+.bf-cross.vent {
+  --hc: #8fdcff;
+}
+.bf-cross.over > .t,
+.bf-cross.over > .b,
+.bf-cross.over > .l,
+.bf-cross.over > .r {
+  background: #ff5a4f;
+}
+
+/* ---------- The heat (bottom right): the blaster's name, a slim bar, what it's doing ---------- */
+.bf-heat {
+  position: absolute;
+  right: 26px;
+  bottom: 24px;
+  width: 250px;
+  padding: 10px 0 0 40px;
+  --heat: 0;
+  --hc: #f3f5f7;
+  background: none;
+  z-index: 0;
+  filter: drop-shadow(0 0 1px rgba(0, 0, 0, 0.6)) drop-shadow(0 1px 4px rgba(0, 0, 0, 0.35));
+  color: #f3f5f7;
+  text-align: right;
+  font-family: var(--sans);
+  text-shadow: 0 1px 6px rgba(0, 0, 0, 0.55);
+}
+/* (No panel behind it: a tight dark halo round each mark, its filter, keeps it readable over snow and sky.) */
+.bf-heat-name {
+  font: 600 13px/1.1 var(--pixel);
+  letter-spacing: 0.24em;
+  margin-right: -0.24em;
+  text-transform: uppercase;
+  color: #f3f5f7;
+}
+.bf-heat-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 8px;
+}
+.bf-heat-label {
+  font: 600 9px var(--pixel);
+  letter-spacing: 0.3em;
+  color: rgba(243, 245, 247, 0.75);
+}
+.bf-heat-track {
+  position: relative;
+  flex: 1;
+  height: 3px;
+  background: rgba(255, 255, 255, 0.16);
+  overflow: visible;
+}
+.bf-heat-fill {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: calc(var(--heat) * 100%);
+  background: var(--hc);
+  box-shadow: 0 0 8px color-mix(in srgb, var(--hc) 70%, transparent);
+  transition: width 90ms linear, background 180ms ease;
+}
+/* Ten marks under it. */
+.bf-heat-ticks {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 5px;
+  height: 3px;
+  background: repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.22) 0 1px, transparent 1px 10%);
+}
+.bf-heat-pct {
+  min-width: 34px;
+  font: 500 14px var(--pixel);
+  font-variant-numeric: tabular-nums;
+  color: var(--hc);
+}
+.bf-heat-note {
+  height: 14px;
+  margin-top: 6px;
+  font: 600 10px/14px var(--pixel);
+  letter-spacing: 0.34em;
+  margin-right: -0.34em;
+  color: var(--hc);
+}
+.bf-heat.warm {
+  --hc: #ffb54a;
+}
+.bf-heat.hot {
+  --hc: #ff5a4f;
+}
+.bf-heat.hot .bf-heat-note {
+  animation: bf-soft 0.6s ease-in-out infinite;
+}
+.bf-heat.over {
+  --hc: #ff5a4f;
+}
+.bf-heat.over .bf-heat-fill {
+  background: #8fdcff;
+  box-shadow: 0 0 10px rgba(143, 220, 255, 0.7);
+}
+.bf-heat.over .bf-heat-note {
+  animation: bf-soft 0.9s ease-in-out infinite;
+}
+.bf-heat.over .bf-heat-pct {
+  color: #8fdcff;
+}
+.bf-heat.vent {
+  --hc: #8fdcff;
+}
+@keyframes bf-soft {
+  50% {
+    opacity: 0.4;
+  }
+}
+
+/* ---------- The cycler's scope ---------- */
+.bf-scope {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  --lens: min(40vh, 40vw);
+  background: radial-gradient(circle at center, transparent 0, transparent var(--lens), rgba(4, 6, 9, 0.94) calc(var(--lens) + 2px), #030406 calc(var(--lens) + 60px));
+}
+.bf-scope-lens {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: calc(var(--lens) * 2);
+  height: calc(var(--lens) * 2);
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  box-shadow: inset 0 0 70px 24px rgba(0, 0, 0, 0.6);
+  background:
+    /* The cross hairs, broken round the middle. */
+    linear-gradient(90deg, transparent calc(50% - 0.75px), rgba(255, 70, 40, 0.9) calc(50% - 0.75px) calc(50% + 0.75px), transparent calc(50% + 0.75px)) center top / 100% 44% no-repeat,
+    linear-gradient(90deg, transparent calc(50% - 1.5px), rgba(10, 10, 10, 0.85) calc(50% - 1.5px) calc(50% + 1.5px), transparent calc(50% + 1.5px)) center bottom / 100% 44% no-repeat,
+    linear-gradient(transparent calc(50% - 0.75px), rgba(255, 70, 40, 0.9) calc(50% - 0.75px) calc(50% + 0.75px), transparent calc(50% + 0.75px)) left center / 44% 100% no-repeat,
+    linear-gradient(transparent calc(50% - 0.75px), rgba(255, 70, 40, 0.9) calc(50% - 0.75px) calc(50% + 0.75px), transparent calc(50% + 0.75px)) right center / 44% 100% no-repeat,
+    radial-gradient(circle at center, rgba(255, 60, 30, 0.06), rgba(255, 60, 30, 0) 60%);
+}
+.bf-scope-ring {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 22%;
+  height: 22%;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  border: 1px solid rgba(255, 70, 40, 0.55);
+  -webkit-mask: conic-gradient(#000 0 30deg, transparent 30deg 60deg, #000 60deg 120deg, transparent 120deg 150deg, #000 150deg 210deg, transparent 210deg 240deg, #000 240deg 300deg, transparent 300deg 330deg, #000 330deg);
+  mask: conic-gradient(#000 0 30deg, transparent 30deg 60deg, #000 60deg 120deg, transparent 120deg 150deg, #000 150deg 210deg, transparent 210deg 240deg, #000 240deg 300deg, transparent 300deg 330deg, #000 330deg);
+}
+/* Range ticks down the lower hair. */
+.bf-scope-ticks {
+  position: absolute;
+  left: calc(50% - 7px);
+  top: 56%;
+  width: 14px;
+  height: 20%;
+  background: repeating-linear-gradient(transparent 0 calc(20% - 1px), rgba(255, 70, 40, 0.8) calc(20% - 1px) 20%);
+}
+.bf-scope-read {
+  position: absolute;
+  left: 58%;
+  top: 53%;
+  font: 700 10px var(--pixel);
+  letter-spacing: 0.2em;
+  color: rgba(255, 90, 60, 0.85);
+}
+.bf-scope-dot {
+  position: absolute;
+  left: calc(50% - 2px);
+  top: calc(50% - 2px);
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: #ff4a2e;
+  box-shadow: 0 0 6px #ff4a2e;
+}
+
+/* ---------- A red dot's or holo's reticle (first person), at the aim point ---------- */
+.bf-reticle {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 0;
+  height: 0;
+  --rc: #ff2a2a;
+  pointer-events: none;
+  mix-blend-mode: screen;
+}
+.bf-reticle-dot {
+  position: absolute;
+  left: -2.5px;
+  top: -2.5px;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: radial-gradient(circle, #fff 0 18%, var(--rc) 45%);
+  box-shadow: 0 0 4px 1px var(--rc), 0 0 10px 2px color-mix(in srgb, var(--rc) 55%, transparent);
+}
+.bf-reticle.holo .bf-reticle-dot {
+  left: -2px;
+  top: -2px;
+  width: 4px;
+  height: 4px;
+}
+.bf-reticle-ring {
+  display: none;
+  position: absolute;
+  left: -30px;
+  top: -30px;
+  width: 60px;
+  height: 60px;
+  box-sizing: border-box;
+  border-radius: 50%;
+  border: 2px solid var(--rc);
+  box-shadow: 0 0 6px color-mix(in srgb, var(--rc) 80%, transparent), inset 0 0 6px color-mix(in srgb, var(--rc) 70%, transparent);
+  opacity: 0.9;
+  background:
+    linear-gradient(var(--rc), var(--rc)) top center / 2px 7px no-repeat,
+    linear-gradient(var(--rc), var(--rc)) bottom center / 2px 7px no-repeat,
+    linear-gradient(var(--rc), var(--rc)) left center / 7px 2px no-repeat,
+    linear-gradient(var(--rc), var(--rc)) right center / 7px 2px no-repeat;
+}
+.bf-reticle.holo .bf-reticle-ring {
+  display: block;
+}
+
+/* ---------- On a touch screen: the heat drawn to fit, by the buttons rather than under them ---------- */
+body.touch-mode .bf-heat {
+  zoom: var(--hud-zoom, 1);
+}
+body.touch-playing .bf-heat {
+  right: calc((env(safe-area-inset-right, 0px) + 172px * var(--touch-zoom, 1)) / var(--hud-zoom, 1));
+  bottom: calc((env(safe-area-inset-bottom, 0px) + 10px * var(--touch-zoom, 1)) / var(--hud-zoom, 1));
+}

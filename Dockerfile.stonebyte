@@ -1,0 +1,40 @@
+# Stonebyte's game server: the same server as ./Dockerfile, but this one builds the game engine
+# (the Rust/WebAssembly part) itself, so nothing needs installing on your computer.
+# GitHub builds it for free (see .github/workflows/stonebyte-server.yml).
+
+# 1. The engine: Rust compiled to WebAssembly.
+FROM rust:1-slim AS wasm
+RUN apt-get update && apt-get install -y --no-install-recommends curl ca-certificates pkg-config libssl-dev build-essential && rm -rf /var/lib/apt/lists/*
+RUN rustup target add wasm32-unknown-unknown
+RUN curl -sSf https://rustwasm.github.io/wasm-pack/installer/init.sh | sh
+WORKDIR /app
+COPY engine ./engine
+RUN wasm-pack build engine --target web --release --out-dir pkg --out-name voxel_engine
+
+# 2. The server's code, bundled.
+FROM node:24-slim AS build
+WORKDIR /app
+COPY package.json package-lock.json ./
+RUN npm ci --ignore-scripts
+COPY tsconfig.json vite.config.ts ./
+COPY src ./src
+COPY --from=wasm /app/engine/pkg ./engine/pkg
+RUN npx vite build --ssr src/serve.ts --outDir dist-server
+COPY scripts/build-sandbox.mjs ./scripts/
+RUN node scripts/build-sandbox.mjs --out dist-sandbox/sandbox.js
+
+# 3. What runs.
+FROM node:24-slim
+WORKDIR /app
+ENV NODE_ENV=production
+COPY package.json package-lock.json ./
+RUN npm ci --omit=dev --ignore-scripts && npm cache clean --force
+COPY --from=build /app/dist-server ./dist-server
+COPY --from=build /app/dist-sandbox ./dist-sandbox
+COPY --from=wasm /app/engine/pkg/voxel_engine_bg.wasm ./engine/pkg/voxel_engine_bg.wasm
+EXPOSE 8080
+# Accounts live in /data. On a host that wipes its disk they're brought back from the backup
+# (BACKUP_DISCORD_TOKEN + BACKUP_DISCORD_CHANNEL, and/or BACKUP_REPO + BACKUP_TOKEN).
+STOPSIGNAL SIGINT
+# The host says which port to use (PORT); 8080 otherwise.
+CMD ["sh", "-c", "exec node --disable-warning=ExperimentalWarning dist-server/serve.js --port ${PORT:-8080} --data /data"]

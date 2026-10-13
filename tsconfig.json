@@ -1,0 +1,55 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "lib": [
+      "ES2022",
+      "DOM",
+      "DOM.Iterable",
+      "WebWorker"
+    ],
+    "types": [
+      "vite/client",
+      "node"
+    ],
+    "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noFallthroughCasesInSwitch": true,
+    "skipLibCheck": true,
+    "isolatedModules": true,
+    "noEmit": true,
+    "paths": {
+      "@platform": [
+        "./src/platform/index.ts"
+      ],
+      "@platform/art": [
+        "./src/platform/art/index.ts"
+      ],
+      "@platform/kits": [
+        "./src/platform/kits/index.ts"
+      ],
+      "@platform/items": [
+        "./src/platform/items/index.ts"
+      ],
+      "@platform/client": [
+        "./src/platform/api/client.ts"
+      ],
+      "@platform/client/kits": [
+        "./src/platform/client-kits/index.ts"
+      ],
+      "@platform/client/math": [
+        "./src/platform/api/client/math.ts"
+      ],
+      "@engine/*": [
+        "./engine/pkg/*"
+      ]
+    }
+  },
+  "include": [
+    "src",
+    "tests",
+    "vite.config.ts"
+  ]
+}

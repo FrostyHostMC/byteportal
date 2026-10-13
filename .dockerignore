@@ -1,0 +1,14 @@
+node_modules
+dist
+dist-server
+data
+docs
+tests
+.git
+engine/target
+engine/src
+engine/Cargo.*
+*.local
+.claude
+.vercel
+dist-sandbox

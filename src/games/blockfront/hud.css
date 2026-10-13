@@ -1,0 +1,803 @@
+/*
+ * Blockfront II's HUD look: a modern field display. White type at a few strengths straight over
+ * the world, Barlow Condensed capitals with wide tracking for labels and tabular numbers, Barlow
+ * for text; deep translucent glass (blurred behind) only where a panel is needed, hairline
+ * dividers, slim bars, small chamfers and soft glows. Each side's colour is an accent (a thin line,
+ * a glow); the crawl's yellow is kept for what matters: your own row, your pick, a hero ready,
+ * the call to act. Motion is short and eased.
+ *
+ * This is the game's `hud.theme.css` (with the scoreboard's two sides, made in `hud.ts`): it
+ * restyles the platform's own HUD pieces by their classes (docs/PLATFORM.md, "The HUD's look");
+ * the conquest bar and the status block are the game's widgets (`hud.ts`), the heat and the
+ * crosshair its client kit's (`client/blaster-hud.css`), a hero's panel the heroes' (`heroes/client/hud.ts`).
+ *
+ * Layout: the conquest bar top middle, the feed top left, the status top right; the radar and
+ * health bottom left, the hotbar bottom middle, heat and detonators bottom right.
+ */
+
+/* The palette, for everything the theme reaches. */
+.gamehud,
+.hud,
+.menu-screen,
+.widget-screen,
+.result-screen {
+  --bf-fg: #f3f5f7;
+  --bf-fg2: rgba(243, 245, 247, 0.66);
+  --bf-fg3: rgba(243, 245, 247, 0.42);
+  --bf-line: rgba(255, 255, 255, 0.12);
+  --bf-line2: rgba(255, 255, 255, 0.24);
+  --bf-glass: rgba(9, 13, 19, 0.58);
+  --bf-glass2: rgba(9, 13, 19, 0.78);
+  --bf-y: var(--hud-accent, #ffe81f);
+  --bf-bad: #ff5a4f;
+  --bf-shadow: 0 1px 6px rgba(0, 0, 0, 0.5);
+}
+
+/* ---------- The feed (top left): kills and the posts changing hands ---------- */
+.feed {
+  left: 20px;
+  top: 18px;
+  gap: 3px;
+  /* Clear of the conquest bar in the middle. */
+  max-width: max(180px, calc(50vw - 330px));
+}
+.feed-line {
+  gap: 7px;
+  padding: 3px 14px 3px 10px;
+  border-radius: 0;
+  background: linear-gradient(90deg, rgba(5, 8, 12, 0.55), rgba(5, 8, 12, 0.3) 70%, transparent);
+  font: 500 13px/1.35 var(--sans);
+  letter-spacing: 0.01em;
+  color: var(--bf-fg);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
+  animation: bf-feed-in 240ms ease-out;
+}
+.feed-line.fade {
+  opacity: 0;
+}
+.feed-icon.wide {
+  width: 44px;
+  height: 18px;
+  opacity: 0.9;
+  filter: drop-shadow(0 0 1px rgba(0, 0, 0, 0.8)) brightness(1.15);
+}
+@keyframes bf-feed-in {
+  from {
+    opacity: 0;
+    transform: translateX(-10px);
+  }
+}
+
+/* ---------- Banners, pops, toasts ---------- */
+.banner {
+  top: 20%;
+  transition: opacity 320ms ease, transform 420ms cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+.banner-title {
+  font: 500 46px/1 var(--pixel);
+  letter-spacing: 0.32em;
+  margin-right: -0.32em;
+  color: var(--bf-fg);
+  text-shadow: 0 0 24px color-mix(in srgb, currentColor 35%, transparent), 0 2px 10px rgba(0, 0, 0, 0.55);
+}
+.banner-sub {
+  display: inline-block;
+  margin-top: 14px;
+  padding: 8px 40px 0;
+  font: 500 13px var(--pixel);
+  letter-spacing: 0.34em;
+  color: var(--bf-fg2);
+  text-transform: uppercase;
+  background: none;
+  border-top: 1px solid;
+  border-image: linear-gradient(90deg, transparent, var(--bf-line2), transparent) 1;
+  text-shadow: var(--bf-shadow);
+}
+.hud-pop {
+  top: calc(50% + 56px);
+  transition: opacity 260ms ease, transform 260ms ease;
+}
+.hud-pop.show {
+  animation: bf-pop 260ms cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+.hud-pop-text {
+  font: 600 15px/1 var(--pixel);
+  letter-spacing: 0.3em;
+  margin-right: -0.3em;
+  text-shadow: 0 0 12px color-mix(in srgb, currentColor 40%, transparent), 0 1px 4px rgba(0, 0, 0, 0.7);
+}
+.hud-pop.big .hud-pop-text {
+  font-size: 26px;
+}
+.hud-pop-sub {
+  margin-top: 5px;
+  font: 500 13px var(--pixel);
+  letter-spacing: 0.16em;
+  color: var(--bf-fg2);
+  text-shadow: var(--bf-shadow);
+}
+@keyframes bf-pop {
+  from {
+    opacity: 0;
+    transform: translate(-50%, 6px) scale(0.96);
+  }
+}
+.toast {
+  bottom: 70px;
+  font: 600 11px var(--pixel);
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--bf-fg2);
+  text-shadow: var(--bf-shadow);
+}
+.game-toast {
+  bottom: 118px;
+  padding: 5px 16px;
+  font: 500 13px var(--sans);
+  letter-spacing: 0.04em;
+  color: var(--bf-fg);
+  background: var(--bf-glass);
+  backdrop-filter: blur(10px);
+  border-radius: 3px;
+}
+
+/* ---------- Health (bottom left, under the radar): the number and a slim segmented bar ---------- */
+.healthbar {
+  left: 26px;
+  bottom: 24px;
+  gap: 10px;
+  filter: drop-shadow(0 0 1px rgba(0, 0, 0, 0.6)) drop-shadow(0 1px 4px rgba(0, 0, 0, 0.35));
+  z-index: 0;
+}
+/* (No panel behind it: a tight dark halo round each mark, its filter, keeps it readable over snow.) */
+.healthbar-text {
+  order: -1;
+  min-width: 34px;
+  font: 500 22px/1 var(--pixel);
+  color: var(--bf-fg);
+  font-variant-numeric: tabular-nums;
+  text-shadow: var(--bf-shadow);
+}
+.healthbar-track {
+  width: 168px;
+  height: 5px;
+  border: none;
+  border-radius: 0;
+  background: rgba(255, 255, 255, 0.14);
+  /* Ten segments. */
+  -webkit-mask: repeating-linear-gradient(90deg, #000 0 calc(10% - 2px), transparent calc(10% - 2px) 10%);
+  mask: repeating-linear-gradient(90deg, #000 0 calc(10% - 2px), transparent calc(10% - 2px) 10%);
+}
+.healthbar-fill {
+  background: var(--bf-fg);
+  box-shadow: none;
+}
+.healthbar-lag {
+  background: rgba(255, 90, 79, 0.75);
+}
+.healthbar.low .healthbar-fill {
+  background: var(--bf-bad);
+  animation: bf-breathe 1s ease-in-out infinite;
+}
+.healthbar.low .healthbar-text {
+  color: var(--bf-bad);
+}
+.healthbar.hit .healthbar-track {
+  animation: none;
+}
+@keyframes bf-breathe {
+  50% {
+    opacity: 0.55;
+  }
+}
+
+/* ---------- The radar (bottom left, over the health) ---------- */
+.radar {
+  left: 22px;
+  right: auto;
+  bottom: 44px;
+  width: 144px;
+  height: 144px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(9, 13, 19, 0.2), rgba(9, 13, 19, 0.55) 72%);
+  box-shadow: 0 0 0 1px var(--bf-line2);
+  backdrop-filter: blur(6px);
+  filter: none;
+}
+
+/* ---------- The hotbar (bottom middle): what's carried, the chosen one lit ---------- */
+.hotbar {
+  bottom: 18px;
+  gap: 2px;
+  padding: 0;
+  border-radius: 0;
+  background: none;
+  border: none;
+  box-shadow: none;
+  backdrop-filter: none;
+}
+.slot {
+  width: 54px;
+  height: 36px;
+  border-radius: 0;
+  border: none;
+  background: linear-gradient(0deg, rgba(5, 8, 12, 0.45), transparent);
+  opacity: 0.55;
+  transition: opacity 160ms ease;
+}
+.slot img {
+  width: 46px;
+  height: 26px;
+  object-fit: contain;
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.7));
+}
+.slot .key {
+  left: 4px;
+  top: 1px;
+  font: 600 9px var(--pixel);
+  color: var(--bf-fg2);
+}
+/* Only what's carried: the empty slots go. */
+.slot:not(.selected):not(:has(img[src])) {
+  display: none;
+}
+.slot.selected {
+  transform: none;
+  opacity: 1;
+  box-shadow: inset 0 -2px 0 var(--bf-y);
+  background: linear-gradient(0deg, rgba(255, 232, 31, 0.14), transparent);
+}
+.slot.selected .key {
+  color: var(--bf-y);
+}
+.slot .count {
+  font: 600 11px var(--pixel);
+  text-shadow: var(--bf-shadow);
+}
+
+/* ---------- Detonators (bottom right, over the heat) ---------- */
+.throwables {
+  right: 26px;
+  bottom: 100px;
+  gap: 10px;
+}
+.throwables {
+  z-index: 0;
+  filter: drop-shadow(0 0 1px rgba(0, 0, 0, 0.6)) drop-shadow(0 1px 4px rgba(0, 0, 0, 0.35));
+}
+.throwable-icon {
+  width: 28px;
+  height: 28px;
+}
+.throwable-count {
+  font: 500 15px var(--pixel);
+  color: var(--bf-fg);
+}
+.throwable-key {
+  font: 600 9px var(--pixel);
+  border-radius: 3px;
+  padding: 1px 4px;
+  background: none;
+  border: 1px solid var(--bf-line2);
+  color: var(--bf-fg2);
+}
+
+/* ---------- The crosshair's company: the plain one (a hero's saber), hits, hurts, capture ---------- */
+.crosshair {
+  width: 10px;
+  height: 10px;
+  border: 1.5px solid rgba(255, 255, 255, 0.85);
+  border-radius: 50%;
+  mix-blend-mode: normal;
+  box-shadow: 0 0 2px rgba(0, 0, 0, 0.7);
+}
+.crosshair::before,
+.crosshair::after {
+  display: none;
+}
+.hitmarker::before,
+.hitmarker::after {
+  background: #fff;
+  box-shadow: 0 0 2px rgba(0, 0, 0, 0.8);
+}
+.hitmarker.crit::before,
+.hitmarker.crit::after {
+  background: var(--bf-y);
+}
+.hitmarker.kill::before,
+.hitmarker.kill::after {
+  background: var(--bf-bad);
+  box-shadow: 0 0 6px var(--bf-bad);
+}
+/*
+ * Hit from the side: an arc of a ring round the crosshair (the platform places each one out
+ * min(22vh, 180px) from the middle, turned toward where the hit came from), a bright line with a
+ * red haze inside it, fading out at both ends.
+ */
+.hurt-arrow {
+  --r: min(22vh, 180px);
+  width: 190px;
+  height: 44px;
+  border: none;
+  background: radial-gradient(circle at 50% calc(50% + var(--r)), transparent calc(var(--r) - 16px), rgba(255, 45, 35, 0.3) calc(var(--r) - 3px), rgba(255, 95, 80, 0.95) calc(var(--r) - 1.5px), rgba(255, 95, 80, 0.95) calc(var(--r) + 1px), transparent calc(var(--r) + 2.5px));
+  -webkit-mask: linear-gradient(90deg, transparent, #000 32%, #000 68%, transparent);
+  mask: linear-gradient(90deg, transparent, #000 32%, #000 68%, transparent);
+  filter: drop-shadow(0 0 4px rgba(255, 30, 20, 0.7));
+}
+/* A flash of the screen (a hit taken, a blast's glare): at the edges only, the middle clear. */
+.screen-flash {
+  -webkit-mask: radial-gradient(ellipse 75% 70% at center, transparent 35%, rgba(0, 0, 0, 0.6) 70%, #000 100%);
+  mask: radial-gradient(ellipse 75% 70% at center, transparent 35%, rgba(0, 0, 0, 0.6) 70%, #000 100%);
+}
+/* Taking a post: a thin ring round the crosshair in your side's colour. */
+.progress-ring {
+  width: 46px;
+  height: 46px;
+  margin: -23px 0 0 -23px;
+  background: conic-gradient(var(--c, rgba(255, 255, 255, 0.85)) var(--p, 0%), rgba(255, 255, 255, 0.14) 0);
+  -webkit-mask: radial-gradient(circle, transparent 20.5px, #000 21.5px);
+  mask: radial-gradient(circle, transparent 20.5px, #000 21.5px);
+  filter: drop-shadow(0 0 4px var(--c, #fff));
+}
+.dmg-number {
+  font: 500 16px/1 var(--pixel);
+  letter-spacing: 0.02em;
+  font-variant-numeric: tabular-nums;
+  color: rgba(243, 245, 247, 0.95) !important;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.85), 0 0 8px rgba(0, 0, 0, 0.35);
+}
+.dmg-number.crit {
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--bf-y) !important;
+}
+
+/* ---------- In the world: the posts' diamonds, names and health over heads ---------- */
+.marker.diamond .marker-shape {
+  border-width: 1.5px;
+  background: color-mix(in srgb, var(--c) 18%, transparent);
+  filter: drop-shadow(0 0 4px var(--c));
+}
+.marker.pulse .marker-shape {
+  animation: bf-marker 1.2s ease-in-out infinite alternate;
+}
+@keyframes bf-marker {
+  to {
+    opacity: 0.5;
+  }
+}
+.marker-label {
+  font: 600 11px var(--pixel);
+  letter-spacing: 0.14em;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.9);
+}
+.marker-bar {
+  height: 3px;
+  width: 40px;
+  border: none;
+  border-radius: 0;
+  background: rgba(0, 0, 0, 0.45);
+}
+
+/* ---------- The scoreboard (Tab): the two sides side by side, on glass ---------- */
+/* Up with a banner (the match's end: VICTORY over the final board), the banner above it. */
+.gamehud:has(> .scoreboard:not([style*='none'])) > .banner {
+  top: 84px;
+}
+.gamehud:has(> .banner.show) > .scoreboard {
+  transform: translate(-50%, -38%);
+}
+.scoreboard {
+  min-width: min(980px, 96vw);
+  padding: 22px 26px 18px;
+  border-radius: 6px;
+  background: var(--bf-glass2);
+  border: 1px solid var(--bf-line);
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(16px) saturate(1.2);
+  color: var(--bf-fg);
+}
+.sb-title {
+  margin-bottom: 16px;
+  font: 500 18px var(--pixel);
+  letter-spacing: 0.36em;
+  color: var(--bf-fg);
+}
+.sb-table {
+  font: 500 13px var(--sans);
+  background: linear-gradient(90deg, transparent calc(50% - 0.5px), var(--bf-line) calc(50% - 0.5px) calc(50% + 0.5px), transparent calc(50% + 0.5px));
+}
+.sb-table th,
+.sb-table::before,
+.sb-table::after,
+.sb-table thead::before,
+.sb-table thead::after,
+.sb-table tbody::before,
+.sb-table tbody::after {
+  padding: 0 8px 8px;
+  font: 600 10px var(--pixel);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  text-align: right;
+  white-space: nowrap;
+  color: var(--bf-fg3);
+  border-bottom: 1px solid var(--bf-line2);
+}
+.sb-table th.sb-name,
+.sb-table thead::before {
+  text-align: left;
+  font-size: 0;
+}
+.sb-table th.sb-name::after,
+.sb-table thead::before {
+  font: 600 12px var(--pixel);
+  letter-spacing: 0.26em;
+}
+.sb-table th.sb-rank,
+.sb-table::before {
+  text-align: left;
+}
+.sb-table td {
+  padding: 5px 8px;
+  border-top: none;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: var(--bf-fg2);
+  font-variant-numeric: tabular-nums;
+}
+.sb-table td.sb-rank {
+  padding: 5px 2px 5px 8px;
+  overflow: visible;
+  font-size: 0;
+}
+.sb-table td.sb-rank::before {
+  font: 500 12px var(--pixel);
+  color: var(--bf-fg3);
+}
+.sb-table .sb-name {
+  width: auto;
+  font-weight: 600;
+}
+.sb-table td:nth-child(3) {
+  color: var(--bf-fg);
+  font-weight: 600;
+}
+.sb-table tr.me td {
+  background: rgba(255, 232, 31, 0.1);
+  color: var(--bf-fg);
+}
+.sb-table tr.me td.sb-rank {
+  box-shadow: inset 2px 0 0 var(--bf-y);
+}
+.sb-footer {
+  margin-top: 14px;
+  font: 500 12px var(--pixel);
+  letter-spacing: 0.24em;
+  color: var(--bf-fg3);
+}
+
+/* ---------- The deploy screen and the match menu (hud.menu): cinematic, the pick lit ---------- */
+.menu-screen {
+  background:
+    radial-gradient(ellipse 80% 70% at 50% 45%, rgba(4, 6, 10, 0.35), rgba(2, 3, 6, 0.86)),
+    linear-gradient(180deg, rgba(2, 3, 6, 0.4), transparent 30%, transparent 70%, rgba(2, 3, 6, 0.5));
+  backdrop-filter: blur(6px) saturate(0.8);
+  animation: bf-fade 260ms ease-out;
+}
+.menu-card {
+  width: min(1040px, calc(100% - 48px));
+  padding: 8px 4px 12px;
+  border-radius: 0;
+  background: none;
+  border: none;
+  box-shadow: none;
+  color: var(--bf-fg);
+  animation: bf-rise 320ms cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+.menu-head {
+  align-items: flex-end;
+  margin-bottom: 22px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--bf-line2);
+}
+.menu-head > div::before {
+  content: 'FIELD COMMAND';
+  display: block;
+  margin-bottom: 8px;
+  font: 600 11px var(--pixel);
+  letter-spacing: 0.5em;
+  color: var(--bf-fg3);
+}
+.menu-title {
+  font: 500 40px/1 var(--pixel);
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--bf-fg);
+  text-shadow: 0 2px 16px rgba(0, 0, 0, 0.5);
+}
+.menu-sub {
+  margin-top: 10px;
+  font: 500 14px var(--sans);
+  letter-spacing: 0.02em;
+  color: var(--bf-fg2);
+}
+.menu-close {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 1px solid var(--bf-line2);
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--bf-fg2);
+  font: 300 20px var(--sans);
+  transition: background 120ms ease, color 120ms ease;
+}
+.menu-close:hover {
+  background: rgba(255, 255, 255, 0.12);
+  color: var(--bf-fg);
+}
+.menu-section + .menu-section {
+  margin-top: 22px;
+}
+.menu-section-title {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 10px;
+  font: 600 11px var(--pixel);
+  letter-spacing: 0.42em;
+  text-transform: uppercase;
+  color: var(--bf-fg3);
+}
+.menu-section-title::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, var(--bf-line2), transparent);
+}
+.menu-grid {
+  grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+  gap: 10px;
+}
+.menu-entry {
+  position: relative;
+  gap: 12px;
+  padding: 12px 14px;
+  border-radius: 4px;
+  border: 1px solid var(--bf-line);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.02)), var(--bf-glass);
+  color: var(--bf-fg);
+  font: 14px var(--sans);
+  transition: border-color 140ms ease, background 140ms ease, transform 140ms ease, box-shadow 140ms ease;
+}
+.menu-entry:hover {
+  border-color: var(--bf-line2);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.03)), var(--bf-glass);
+}
+.menu-entry:active {
+  transform: scale(0.99);
+}
+.menu-entry.active {
+  border-color: color-mix(in srgb, var(--bf-y) 80%, transparent);
+  background: linear-gradient(180deg, rgba(255, 232, 31, 0.16), rgba(255, 232, 31, 0.03) 70%), var(--bf-glass);
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--bf-y) 40%, transparent), 0 10px 30px rgba(0, 0, 0, 0.35), 0 0 24px rgba(255, 232, 31, 0.12);
+}
+.menu-entry.active .menu-label {
+  color: var(--bf-y);
+}
+.menu-label {
+  font: 600 16px/1.1 var(--pixel);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+.menu-note {
+  margin-top: 4px;
+  font: 400 12px/1.35 var(--sans);
+  color: var(--bf-fg2);
+}
+.menu-detail {
+  font: 600 11px var(--pixel);
+  letter-spacing: 0.16em;
+  color: var(--bf-fg2);
+}
+.menu-icon {
+  width: 34px;
+  height: 34px;
+  object-fit: contain;
+}
+/* Class and hero (the first two sections): tall cards, the weapon big across the top. */
+.menu-section:nth-child(1) .menu-grid,
+.menu-section:nth-child(2) .menu-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+.menu-section:nth-child(1) .menu-entry,
+.menu-section:nth-child(2) .menu-entry {
+  flex-direction: column;
+  align-items: stretch;
+  gap: 10px;
+  padding: 14px 16px 16px;
+  min-height: 150px;
+}
+.menu-section:nth-child(1) .menu-icon,
+.menu-section:nth-child(2) .menu-icon {
+  width: 100%;
+  height: 78px;
+  object-fit: contain;
+  image-rendering: auto;
+  background: radial-gradient(ellipse 60% 55% at 50% 60%, rgba(255, 255, 255, 0.08), transparent 75%);
+  filter: drop-shadow(0 6px 10px rgba(0, 0, 0, 0.55));
+  transition: transform 200ms ease;
+}
+.menu-section:nth-child(1) .menu-entry:hover .menu-icon,
+.menu-section:nth-child(2) .menu-entry:hover .menu-icon,
+.menu-section:nth-child(1) .menu-entry.active .menu-icon,
+.menu-section:nth-child(2) .menu-entry.active .menu-icon {
+  transform: scale(1.05);
+}
+.menu-section:nth-child(2) .menu-detail {
+  position: absolute;
+  right: 12px;
+  top: 12px;
+}
+/* One section alone (Heroes vs Villains: only its heroes): its cards share the width. */
+.menu-section:only-child .menu-grid {
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+}
+/* Not to be had now (a hero): dimmed, the reason on a small tag. */
+.menu-entry.disabled,
+.menu-entry.disabled:hover {
+  opacity: 1;
+  border-color: rgba(255, 255, 255, 0.06);
+  background: rgba(9, 13, 19, 0.4);
+}
+.menu-entry.disabled .menu-icon {
+  filter: grayscale(1) brightness(0.55);
+  opacity: 0.6;
+}
+.menu-entry.disabled .menu-label,
+.menu-entry.disabled .menu-note {
+  opacity: 0.45;
+}
+.menu-entry.disabled .menu-detail {
+  padding: 3px 7px;
+  border-radius: 3px;
+  background: rgba(9, 13, 19, 0.8);
+  border: 1px solid var(--bf-line2);
+  color: var(--bf-fg2);
+}
+/* The last section a single choice (Go): the call to act, in the accent. */
+.menu-section:last-child:not(:only-child) .menu-grid:has(> .menu-entry:only-child) {
+  grid-template-columns: 1fr;
+}
+.menu-section:last-child:not(:only-child) .menu-entry:only-child:not(.disabled) {
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  min-height: 0;
+  padding: 14px;
+  border: none;
+  border-radius: 4px;
+  background: var(--bf-y);
+  color: #0b0f14;
+  box-shadow: 0 0 30px rgba(255, 232, 31, 0.22);
+}
+.menu-section:last-child:not(:only-child) .menu-entry:only-child:not(.disabled) .menu-label {
+  font-size: 17px;
+  font-weight: 600;
+  letter-spacing: 0.34em;
+  color: #0b0f14;
+}
+.menu-section:last-child:not(:only-child) .menu-entry:only-child:not(.disabled) .menu-note {
+  color: rgba(11, 15, 20, 0.65);
+}
+.menu-section:last-child:not(:only-child) .menu-entry:only-child:not(.disabled) .menu-text {
+  flex: none;
+  align-items: center;
+}
+.menu-section:last-child:not(:only-child) .menu-entry:only-child:not(.disabled) .menu-icon {
+  display: none;
+}
+.menu-section:last-child:not(:only-child) .menu-entry:only-child:not(.disabled):hover {
+  background: #fff06a;
+}
+/* Where to deploy (the third section): compact. */
+.menu-section:nth-child(3) .menu-grid {
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+}
+.menu-section:nth-child(3) .menu-icon {
+  width: 20px;
+  height: 20px;
+  transform: rotate(45deg) scale(0.8);
+}
+.menu-section:nth-child(3) .menu-label {
+  font-size: 14px;
+}
+/* A short screen: the cards compact, so the whole deploy screen fits without scrolling. */
+@media (max-height: 820px) {
+  .menu-card {
+    padding-top: 0;
+  }
+  .menu-head {
+    margin-bottom: 12px;
+    padding-bottom: 10px;
+  }
+  .menu-head > div::before {
+    margin-bottom: 4px;
+  }
+  .menu-title {
+    font-size: 30px;
+  }
+  .menu-sub {
+    margin-top: 6px;
+  }
+  .menu-section + .menu-section {
+    margin-top: 12px;
+  }
+  .menu-section-title {
+    margin-bottom: 6px;
+  }
+  .menu-section:nth-child(1) .menu-entry,
+  .menu-section:nth-child(2) .menu-entry {
+    min-height: 0;
+    gap: 6px;
+    padding: 10px 14px 12px;
+  }
+  .menu-section:nth-child(1) .menu-icon,
+  .menu-section:nth-child(2) .menu-icon {
+    height: 50px;
+  }
+  .menu-entry {
+    padding: 9px 12px;
+  }
+}
+/* A thin scrollbar, if it scrolls after all. */
+.menu-card::-webkit-scrollbar {
+  width: 4px;
+}
+.menu-card::-webkit-scrollbar-thumb {
+  background: var(--bf-line2);
+  border-radius: 2px;
+}
+.menu-card::-webkit-scrollbar-track {
+  background: none;
+}
+@keyframes bf-fade {
+  from {
+    opacity: 0;
+  }
+}
+@keyframes bf-rise {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+}
+
+/* ---------- Result screens (if any), and the platform's chips ---------- */
+.result-card {
+  border-radius: 6px;
+  background: var(--bf-glass2);
+  border: 1px solid var(--bf-line);
+  backdrop-filter: blur(16px);
+  color: var(--bf-fg);
+}
+.result-title {
+  font-family: var(--pixel);
+  font-weight: 500;
+  letter-spacing: 0.24em;
+}
+.stat,
+.objective {
+  background: var(--bf-glass);
+  color: var(--bf-fg);
+  border: 1px solid var(--bf-line);
+  border-radius: 4px;
+  backdrop-filter: blur(10px);
+}
+
+/* ---------- On a touch screen: the detonators by the buttons ---------- */
+body.touch-playing .throwables {
+  right: calc((env(safe-area-inset-right, 0px) + 172px * var(--touch-zoom, 1)) / var(--hud-zoom, 1));
+  bottom: calc((env(safe-area-inset-bottom, 0px) + 66px * var(--touch-zoom, 1)) / var(--hud-zoom, 1));
+}

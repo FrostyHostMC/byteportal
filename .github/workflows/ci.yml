@@ -1,0 +1,117 @@
+# Checks every pull request and push; a push to main then deploys what changed: the sandbox
+# machine (uploaded games' rooms) and the game server to Fly first, then the site to Vercel (a build
+# for a new wire protocol must not reach players before the server that speaks it). Each deploy is
+# skipped when the live one is the same build, so a docs-only or client-only change doesn't restart
+# the server and end its matches.
+#
+# Secrets: FLY_API_TOKEN (`fly tokens create deploy -a voxel-games`), FLY_SANDBOX_TOKEN (`fly tokens
+# create deploy -a voxel-sandbox`) and VERCEL_TOKEN.
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+# One run per branch at a time. On main, a run waits for the one before it (never cancelling a
+# deploy halfway); a newer push replaces a run still waiting.
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+permissions:
+  contents: read
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  engine:
+    name: Engine tests
+    # On a Mac: the physics fingerprint tests hash results to the last bit, through the
+    # platform's exp and sin, and their prints were taken on Apple silicon (Linux's libm differs).
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: engine
+      - run: cargo test --release --manifest-path engine/Cargo.toml
+
+  build:
+    name: Build and headless tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: wasm32-unknown-unknown
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: engine
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      # The engine, the type and boundary checks, the site's bundle and its check: the site as
+      # it would be deployed, in .vercel/output.
+      - run: node scripts/deploy-site.mjs --build-only
+      - run: npm run test:headless
+      - run: npm run build:server
+      - if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+        uses: actions/upload-artifact@v7
+        with:
+          name: engine
+          path: engine/pkg
+          retention-days: 7
+      - if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+        uses: actions/upload-artifact@v7
+        with:
+          name: site
+          path: .vercel/output
+          include-hidden-files: true
+          retention-days: 7
+
+  deploy:
+    name: Deploy
+    needs: [engine, build]
+    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    environment:
+      name: production
+      url: https://blockyard.gg
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - uses: actions/download-artifact@v8
+        with:
+          name: engine
+          path: engine/pkg
+      - uses: actions/download-artifact@v8
+        with:
+          name: site
+          path: .vercel/output
+      - uses: superfly/flyctl-actions/setup-flyctl@1.5
+      # The sandbox first: the game server it relays to then finds it current.
+      - name: Deploy the sandbox (Fly)
+        run: node scripts/deploy-server.mjs --sandbox --no-wasm --if-changed
+        env:
+          FLY_API_TOKEN: ${{ secrets.FLY_SANDBOX_TOKEN }}
+      - name: Deploy the game server (Fly)
+        run: node scripts/deploy-server.mjs --no-wasm --if-changed
+        env:
+          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+      - run: npm install --global vercel@latest
+      - name: Deploy the site (Vercel)
+        run: node scripts/deploy-site.mjs --deploy-only --if-changed
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_ORG_ID: team_xTZGWvAxHp1nVfAJioyCQKzH
+          VERCEL_PROJECT_ID: prj_cZq0m9fhrSEYwj6ZZLKMSsLt7KNS

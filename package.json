@@ -1,0 +1,41 @@
+{
+  "name": "blockyard",
+  "private": true,
+  "version": "0.1.0",
+  "license": "MIT",
+  "type": "module",
+  "scripts": {
+    "wasm": "wasm-pack build engine --target web --release --out-dir pkg --out-name voxel_engine",
+    "wasm:dev": "wasm-pack build engine --target web --profiling --out-dir pkg --out-name voxel_engine",
+    "dev": "npm run wasm && node --disable-warning=ExperimentalWarning scripts/dev.mjs",
+    "build": "npm run wasm && tsc --noEmit && npm run check:boundaries && BUNDLE_REPORT=1 vite build && npm run check:bundle",
+    "preview": "vite preview",
+    "typecheck": "tsc --noEmit && npm run check:boundaries",
+    "check:boundaries": "node scripts/check-boundaries.mjs && node scripts/check-presentation.mjs",
+    "check:presentation": "node scripts/check-presentation.mjs",
+    "check:bundle": "node scripts/check-bundle.mjs",
+    "test:engine": "cargo test --release --manifest-path engine/Cargo.toml",
+    "test:headless": "node --disable-warning=ExperimentalWarning scripts/headless.mjs",
+    "server": "node --disable-warning=ExperimentalWarning scripts/server.mjs",
+    "game": "node --disable-warning=ExperimentalWarning scripts/game.mjs",
+    "build:server": "vite build --ssr src/serve.ts --outDir dist-server",
+    "start": "node --disable-warning=ExperimentalWarning dist-server/serve.js",
+    "deploy:server": "node scripts/deploy-server.mjs",
+    "deploy:site": "node scripts/deploy-site.mjs"
+  },
+  "dependencies": {
+    "esbuild": "^0.28.2",
+    "fflate": "^0.8.3",
+    "source-map-js": "^1.2.2",
+    "three": "^0.186.0",
+    "ws": "^8.21.3"
+  },
+  "devDependencies": {
+    "@types/node": "^26.6.2",
+    "@types/three": "^0.186.0",
+    "@types/ws": "^8.18.1",
+    "typescript": "^7.0.2",
+    "vite": "^8.3.0",
+    "wasm-pack": "^0.15.0"
+  }
+}

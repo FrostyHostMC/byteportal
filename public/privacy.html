@@ -1,0 +1,197 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Privacy · Stonebyte</title>
+    <meta name="description" content="What Stonebyte knows about you, where it's kept, and how to remove it." />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <style>
+      :root {
+        --bg: #0b0e14;
+        --panel: #121722;
+        --text: #e8ecf3;
+        --muted: #9aa4b5;
+        --accent: #7fd46b;
+        color-scheme: dark;
+      }
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--text);
+        font: 16px/1.6 system-ui, -apple-system, 'Segoe UI', sans-serif;
+      }
+      main {
+        max-width: 720px;
+        margin: 0 auto;
+        padding: 40px 16px 64px;
+      }
+      h1 {
+        font-size: 28px;
+        margin: 0 0 4px;
+      }
+      h2 {
+        font-size: 18px;
+        margin: 32px 0 8px;
+      }
+      p,
+      li {
+        color: var(--text);
+      }
+      .muted {
+        color: var(--muted);
+        font-size: 14px;
+      }
+      ul {
+        padding-left: 20px;
+      }
+      li {
+        margin: 6px 0;
+      }
+      a {
+        color: var(--accent);
+      }
+      code {
+        font: 14px ui-monospace, SFMono-Regular, Menlo, monospace;
+        background: var(--panel);
+        border-radius: 4px;
+        padding: 1px 5px;
+        overflow-wrap: anywhere;
+      }
+      .box {
+        background: var(--panel);
+        border-radius: 12px;
+        padding: 16px 18px;
+        margin: 20px 0;
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1>Privacy</h1>
+      <p class="muted">Version 2 · what Stonebyte knows about you, where it's kept, and how to remove it</p>
+
+      <div class="box">
+        <p>Stonebyte is a website of multiplayer block games you play in the browser. It keeps as little about you as it can to run the games: you can play without an account, and signing in with Discord only tells Stonebyte who you are on Discord, not your email, servers, friends or messages. There are no ads, no analytics or tracking scripts, and your information is never sold.</p>
+      </div>
+
+      <h2>Who runs Stonebyte</h2>
+      <p>Stonebyte is run by [who runs Stonebyte]. For any question about your information, or to ask for a copy of it or for it to be removed, write to [contact email].</p>
+
+      <h2>Playing as a guest</h2>
+      <ul>
+        <li>You can play every game without signing in. You pick a name and a look, and your browser remembers them for next time (see <a href="#storage">Cookies and browser storage</a>).</li>
+        <li>While you play, the game server gets the name you typed and your look, so other players can see you. If an account already has that name, yours is shown with "(guest)" after it.</li>
+        <li>What you earn as a guest (achievements, a game's progress) lasts only this visit: it isn't kept on the server once you leave.</li>
+        <li>In games that keep their world, what you build stays part of that world for everyone, but it isn't tied to you.</li>
+        <li>Like every visitor's, your connection's IP address is used to limit abuse while you're connected, in the server's memory only; it isn't written to its logs (see <a href="#logs">Logs</a>).</li>
+      </ul>
+
+      <h2>Signing in with Discord</h2>
+      <p>Signing in uses Discord's "identify" permission only. Discord tells Stonebyte your Discord user id, username, display name and avatar picture. Stonebyte doesn't keep the access token Discord hands over; it only asks who you are, once, as you sign in.</p>
+      <p>For your account, Stonebyte keeps:</p>
+      <ul>
+        <li>Your Discord user id, and a Stonebyte account id made for you.</li>
+        <li>Your Stonebyte name: your Discord display name at first (made unique), which you can change once a day. When you last changed it is kept; older names aren't.</li>
+        <li>The address of your Discord avatar picture, updated each time you sign in.</li>
+        <li>When the account was made and when you last signed in.</li>
+        <li>Your look: the character you made and the cosmetics you wear, the cosmetics you've unlocked and when, and the achievements you've earned in each game and when.</li>
+        <li>Your sign-ins: each is a random code kept in a cookie in your browser. Stonebyte keeps only a scrambled (hashed) copy, so the code can't be read back from its records. A sign-in lasts 90 days, or until you sign out.</li>
+      </ul>
+      <p>Other players see your Stonebyte name, your look and your avatar picture in the games you join, and your name next to games you've made.</p>
+
+      <h2>Game data</h2>
+      <p>Each game has its own database on the game server. For a signed-in player, a game may keep:</p>
+      <ul>
+        <li>Where you left off in a world it keeps (your position, and for building games your hotbar).</li>
+        <li>Whatever the game saves for you: progress, stats, unlocks, settings of its own. Each game decides what this is.</li>
+        <li>Things it keeps for everyone, such as a leaderboard, which may show your name.</li>
+      </ul>
+      <p>All of it is stored under your Stonebyte account id, never under your Discord id.</p>
+
+      <h2>Uploaded games and their creators</h2>
+      <p>Anyone allowed to upload can put a game of their own on Stonebyte (see the <a href="/upload-terms.html">upload terms</a>). If you upload:</p>
+      <ul>
+        <li>Your account is recorded as the game's owner and as the uploader of each version. Your name is shown with the game, and owners can add other accounts as co-owners by name.</li>
+        <li>What you upload (your game's source files) and the game built from it are kept on the game server, for the game's last 10 versions, until you or Stonebyte delete the game.</li>
+        <li>Stonebyte keeps which version of the upload terms you accepted and when, and an activity record of who uploaded or changed what, so its admin can follow what happened.</li>
+        <li>If you make an upload token (for uploading from the command line), only a hashed copy is kept, with when it was made and last used.</li>
+        <li>Stonebyte may check how old your Discord account is before letting you upload. That's worked out from your Discord user id; nothing more is asked of Discord.</li>
+        <li>If your account is banned from uploading, the ban, who made it and why are kept.</li>
+      </ul>
+      <p>Anyone can report a game. A report keeps what you wrote, the game and its version, when, and your account id if you're signed in (nothing about you if you're a guest). Stonebyte's admin sees reports with the reporter's name. To stop floods, the server counts recent reports from each IP address in its memory only; addresses aren't saved.</p>
+      <p><b>What uploaded games get of yours.</b> An uploaded game runs apart from the rest of Stonebyte. Its screen runs in a locked-down frame in your browser that can't read your sign-in cookie or the site's storage, and can only talk to Stonebyte's own servers. Its server code runs on a separate machine with no access to Stonebyte's accounts. A game, uploaded or not, gets your Stonebyte account id, your name, your look, your avatar picture (by way of Stonebyte's game server, so the game never learns your Discord id), the achievements and cosmetics you have in it, and the data it kept for you itself.</p>
+
+      <h2>Play stats</h2>
+      <ul>
+        <li>Each time you play a game, the game server records which game, when, for how long, and your account id if you're signed in (nothing about you if you're a guest).</li>
+        <li>A game's creators, and Stonebyte's admin, see only counts from these: how many plays and players, how long they played, and how many came back on another day. Never who.</li>
+        <li>Each play is kept for 90 days; after that, only each day's totals for the game are. Deleting your account removes your account id from them.</li>
+      </ul>
+
+      <h2>Error reports</h2>
+      <ul>
+        <li>When something breaks on the site or in a game, your browser sends the game server an error report: the error message and where in the code it happened (the stack trace), the page's address, the game and its version, your browser's user agent (its name and version), and which build of Stonebyte it was. Errors in game rooms on the server are recorded the same way.</li>
+        <li>Reports of the same error are grouped and kept on the game server so Stonebyte's admin, and for an uploaded game its owners, can fix the problem. An error is kept until 30 days after it last happened.</li>
+        <li>The admin may get a short note of a new error (its message and the game it happened in) in a private Discord channel.</li>
+        <li>Error reports contain no account details beyond what an error message itself might happen to include. They aren't sold or shared.</li>
+      </ul>
+
+      <h2 id="storage">Cookies and browser storage</h2>
+      <p>Stonebyte uses no advertising or tracking cookies. It uses:</p>
+      <ul>
+        <li><code>__Host-session</code>, a cookie on play.blockyard.gg (the game server) holding your sign-in. Page scripts can't read it, it's only sent over HTTPS, and it lasts 90 days or until you sign out.</li>
+        <li><code>oauth</code>, a cookie that lasts only while you sign in (10 minutes at most): a random check value and the page to send you back to.</li>
+        <li>Your browser's local storage, for things kept on your device: the name you typed, a guest's look, your settings (graphics, controls, key bindings, volume) and the graphics quality picked for your device. These stay in your browser. Only your name and look are sent to the game server, when you play.</li>
+      </ul>
+
+      <h2 id="logs">Logs</h2>
+      <ul>
+        <li>The game server writes a running log, which goes to its hosting provider's log service (Fly.io). It records connections and the room joined (not IP addresses); the name each player plays as (and the account id, if signed in); sign-ins (name and account id); account deletions (account id); uploads and changes to uploaded games; and errors.</li>
+        <li>To limit abuse, the server also counts open connections and private rooms from each IP address. Those counts are held in its memory only, while you're connected.</li>
+        <li>Stonebyte doesn't set its own time limit on these logs: they last as long as the hosting provider keeps them.</li>
+      </ul>
+
+      <h2>Who else is involved</h2>
+      <ul>
+        <li><b>Vercel</b> hosts the website (blockyard.gg). Like any web host, it sees your IP address and the pages you load.</li>
+        <li><b>Fly.io</b> hosts the game server and the machine uploaded games run on, in its <code>iad</code> region in the United States. Everything Stonebyte keeps (accounts, game data, uploaded games, error reports) is stored there, so it's kept in the United States.</li>
+        <li><b>Discord</b> handles signing in, under its own privacy policy. On the site's pages, your avatar picture is loaded from Discord's servers, which see your IP address when it loads; in games, it comes by way of Stonebyte's game server.</li>
+        <li><b>Google Fonts</b> supplies the site's fonts. Your browser loads them from Google's servers, which see your IP address.</li>
+      </ul>
+      <p>Stonebyte doesn't sell your information, share it with advertisers, or use it for anything but running Stonebyte.</p>
+
+      <h2>How long things are kept</h2>
+      <ul>
+        <li><b>Your account</b> and everything tied to it (look, cosmetics, achievements, game data): until you delete it.</li>
+        <li><b>A sign-in</b>: 90 days, or until you sign out. Expired ones are cleared out every hour.</li>
+        <li><b>A guest's progress</b>: until you leave the game.</li>
+        <li><b>Uploaded games</b>: until their owners or Stonebyte delete them; the last 10 versions of each.</li>
+        <li><b>Error reports</b>: until 30 days after the error last happened.</li>
+        <li><b>Play stats</b>: each play 90 days, then only each day's totals for the game.</li>
+        <li><b>Reports of games</b>: until 180 days after they're dealt with.</li>
+        <li><b>The uploads activity record</b>: 90 days.</li>
+        <li><b>Server logs</b>: as long as the hosting provider keeps them.</li>
+      </ul>
+
+      <h2>Your choices</h2>
+      <ul>
+        <li><b>Play as a guest.</b> You never need an account to play.</li>
+        <li><b>Sign out</b> from the account menu on the home page. Your sign-in is ended on the server too.</li>
+        <li><b>Change your name</b> in the name box on the home page, once a day.</li>
+        <li><b>Delete your account</b> with <b>Delete my account</b> in the account menu. This removes your account and Discord id, your sign-ins, look, cosmetics, achievements, upload tokens and your acceptance of the upload terms, plus what every game, uploaded ones included, kept for you. It can't be undone: signing in again makes a fresh account.</li>
+        <li>Some things stay after you delete your account: games you uploaded (they stay up, and you stay listed as an owner by account id only); reports you made (without your name or account id); play stats (counted, no longer tied to you); the uploads activity record; error reports; and server logs. To have any of that removed, write to [contact email].</li>
+        <li>Stonebyte keeps no Discord access, but you can also remove it from <b>Authorized Apps</b> in Discord's settings.</li>
+        <li>To ask what Stonebyte holds about you, or to have it corrected or removed, write to [contact email]. Depending on where you live, you may have further rights over your information.</li>
+      </ul>
+
+      <h2>Children</h2>
+      <p>Stonebyte isn't directed at children under 13. If you believe a child under 13 has made an account, write to [contact email] and it will be removed.</p>
+
+      <h2>Changes</h2>
+      <p>This policy may change as Stonebyte does. When it does, the new version is posted here with a new version number.</p>
+
+      <p class="muted"><a href="/">Back to Stonebyte</a></p>
+    </main>
+  </body>
+</html>
