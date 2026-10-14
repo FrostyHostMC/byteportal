@@ -27,4 +27,5 @@ jobs:
           context: .
           file: Dockerfile.stonebyte
           push: true
+          build-args: SITE_BASE=/byteportal/
           tags: ghcr.io/${{ env.OWNER }}/stonebyte-server:latest

@@ -14,7 +14,7 @@ import { Runtime, type FrameOpen } from '../runtime';
 import type { TitleScreen } from './home';
 
 /** The frame's page: on this site, but an opaque origin by its sandbox. */
-const FRAME_PAGE = '/frame.html';
+const FRAME_PAGE = `${import.meta.env.BASE_URL}frame.html`;
 
 export class FrameHost {
   private frame: HTMLIFrameElement | null = null;

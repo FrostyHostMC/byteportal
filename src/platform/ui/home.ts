@@ -182,7 +182,7 @@ export class TitleScreen implements HomeScreen {
     this.account.onGames = () => this.account.server && this.mygames.show(this.account.server);
     this.mygames.onOpen = (id) => this.game?.onPick(id);
     this.directory.onPick = (id) => id !== this.game?.current && this.game?.onPick(id);
-    this.guest = h('div.home-guest.hidden', {}, 'Type your name above and press Play: it locks in, and your progress is saved to it. ', h('a.home-guest-privacy', { href: '/privacy.html', target: '_blank', rel: 'noopener' }, 'Privacy'));
+    this.guest = h('div.home-guest.hidden', {}, 'Type your name above and press Play: it locks in, and your progress is saved to it. ', h('a.home-guest-privacy', { href: `${import.meta.env.BASE_URL}privacy.html`, target: '_blank', rel: 'noopener' }, 'Privacy'));
     const faceButton = h('button.home-face-button', { onclick: () => this.openLocker(), title: 'Your look', 'aria-label': 'Your look' }, this.face);
     this.actions = h('div.home-actions', {}, faceButton, h('label.home-name', {}, h('span', {}, 'Playing as'), this.nameInput), this.button);
     this.drawFace();

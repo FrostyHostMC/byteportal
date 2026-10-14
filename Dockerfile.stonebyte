@@ -13,13 +13,15 @@ RUN wasm-pack build engine --target web --release --out-dir pkg --out-name voxel
 
 # 2. The server's code, bundled.
 FROM node:24-slim AS build
+# The site's path (see vite.config.ts): the server names the game's files by address, so it needs it too.
+ARG SITE_BASE=/
 WORKDIR /app
 COPY package.json package-lock.json ./
 RUN npm ci --ignore-scripts
 COPY tsconfig.json vite.config.ts ./
 COPY src ./src
 COPY --from=wasm /app/engine/pkg ./engine/pkg
-RUN npx vite build --ssr src/serve.ts --outDir dist-server
+RUN npx vite build --ssr src/serve.ts --outDir dist-server --base ${SITE_BASE}
 COPY scripts/build-sandbox.mjs ./scripts/
 RUN node scripts/build-sandbox.mjs --out dist-sandbox/sandbox.js
 

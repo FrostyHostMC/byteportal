@@ -31,6 +31,9 @@ jobs:
       - run: npx vite build
         env:
           VITE_GAME_SERVER: ${{ vars.GAME_SERVER }}
+          # The repository is named byteportal, so GitHub Pages serves the site under /byteportal/.
+          # (Named <account>.github.io instead, this line goes and the site is at the root.)
+          SITE_BASE: /byteportal/
       - uses: actions/upload-pages-artifact@v3
         with:
           path: dist

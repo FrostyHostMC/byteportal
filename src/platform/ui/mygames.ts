@@ -228,7 +228,7 @@ export class MyGamesPanel {
       : h('button.mygames-button', { onclick: () => void this.change(g.id, { current: g.versions[0]?.version }) }, 'Host the newest version');
     const copy = h('button.mygames-button', {}, 'Copy link') as HTMLButtonElement;
     copy.onclick = () => {
-      void navigator.clipboard?.writeText(g.play ?? `${location.origin}/?game=${g.id}`).then(() => {
+      void navigator.clipboard?.writeText(g.play ?? `${location.origin}${import.meta.env.BASE_URL}?game=${g.id}`).then(() => {
         copy.textContent = 'Copied';
         window.setTimeout(() => (copy.textContent = 'Copy link'), 1500);
       });

@@ -83,6 +83,10 @@ function bundleReport(worker: boolean): Plugin | null {
 }
 
 export default defineConfig({
+  // Where the site is served from: '/' normally (and in development); the Pages build sets SITE_BASE=/byteportal/
+  // (a project site lives under its repository's name). Every built script, style and file the page
+  // names gets this in front; so does `import.meta.env.BASE_URL`, for the few addresses written in code.
+  base: process.env.SITE_BASE || '/',
   resolve: {
     alias: [
       { find: /^@platform\/art$/, replacement: r('./src/platform/art/index.ts') },
